@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 
+namespace skill_scope_backend.Controllers;
+
 [ApiController]
 [Route("[controller]")]
 public class SearchController : ControllerBase
