@@ -9,6 +9,27 @@ namespace skill_scope_backend.Repositories
     {
         private readonly string _connectionString = connectionString;
 
+        public async Task<IEnumerable<SkillDTO>> GetTitleSkillDesireAsync(string keyword)
+        {
+            var sql = @"
+                SELECT s.SkillId, s.SkillName, 
+                    COUNT(*) * 100.0 / SUM(COUNT(*)) OVER() AS Percentage
+                FROM JobPostings jp
+                JOIN SkillQualifications sq ON jp.JobPostingId = sq.JobPostingId
+                JOIN Skills s ON sq.SkillId = s.SkillId
+                WHERE CONTAINS(jp.Title, @Keyword)
+                GROUP BY s.SkillId, s.SkillName";
+
+            using IDbConnection db = new NpgsqlConnection(_connectionString);
+            var skillPercentages = await db.QueryAsync<dynamic>(sql, new { Keyword = keyword });
+
+            return skillPercentages.Select(sp => new SkillDTO
+            {
+                Skill = new Skill { SkillId = sp.SkillId, SkillName = sp.SkillName },
+                Percentage = sp.Percentage
+            });
+        }
+
         public async Task<JobPosting?> GetByIdAsync(int jobPostingId)
         {
             using IDbConnection db = new NpgsqlConnection(_connectionString);
