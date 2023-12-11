@@ -1,20 +1,23 @@
 using Microsoft.AspNetCore.Mvc;
+using skill_scope_backend.Repositories;
 
 namespace skill_scope_backend.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class SearchController : ControllerBase
+public class SearchController(IJobPostingRepository jobPostingRepository) : ControllerBase
 {
-    [HttpPost("perform")]
-    public IActionResult Post([FromBody] SearchData data)
-    {
-        return Ok(new { message = "Search functionality not yet implemented" });
-    }
-}
+    private readonly IJobPostingRepository _jobPostingRepository = jobPostingRepository;
 
-public class SearchData
-{
-    public string? Query { get; set; }
-    // Other properties
+    [HttpGet("perform/{keyword}")]
+    public async Task<IActionResult> Get(string keyword)
+    {
+        if (string.IsNullOrWhiteSpace(keyword))
+        {
+            return BadRequest("Search query cannot be empty.");
+        }
+
+        var skills = await _jobPostingRepository.GetTitleSkillDesireAsync(keyword);
+        return Ok(skills);
+    }
 }
