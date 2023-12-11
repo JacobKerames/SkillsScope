@@ -5,7 +5,7 @@ public class ExperienceQualification
     public int JobPostingId { get; set; }
     public int? SkillId { get; set; }
     public int YearsExperience { get; set; }
-    public string ExperienceReference { get; set; }
+    public required string ExperienceReference { get; set; }
     public ExperienceType ExperienceType { get; set; }
 }
 
