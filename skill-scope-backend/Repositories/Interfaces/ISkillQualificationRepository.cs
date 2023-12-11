@@ -1,6 +1,6 @@
 using skill_scope_backend.Models;
 
-namespace skill_scope_backend.Repositories
+namespace skill_scope_backend.Repositories.Interfaces
 {
     public interface ISkillQualificationRepository
     {
