@@ -1,8 +1,8 @@
 CREATE TABLE countries (
 	country_id SERIAL PRIMARY KEY,
 	country_name VARCHAR(100) NOT NULL,
-	country_alpha2_code CHAR(2) NOT NULL,
-	country_alpha3_code CHAR(3) NOT NULL
+	country_alpha2_code CHAR(2),
+	country_alpha3_code CHAR(3)
 );
 CREATE INDEX fts_country_name ON countries USING GIN (to_tsvector('english', country_name));
 
