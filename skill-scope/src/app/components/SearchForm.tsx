@@ -1,26 +1,19 @@
 'use client'
 
-import React, { useState, FormEvent } from "react";
+import React, { useState, FormEvent } from 'react';
+import { useRouter } from 'next/router';
 
 const SearchForm = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
+  const router = useRouter();
 
-  const handleSearch = async (event: FormEvent<HTMLFormElement>) => {
+  const handleSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!searchTerm.trim()) {
-      console.error("Search term is empty");
+      console.error('Search term is empty');
       return;
     }
-    try {
-      const response = await fetch(`http://localhost:5277/search/perform/${encodeURIComponent(searchTerm)}`);
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      const data = await response.json();
-      console.log(data);
-    } catch (error) {
-      console.error("There has been a problem with your fetch operation:", error);
-    }
+    router.push(`/search-results?query=${encodeURIComponent(searchTerm)}`);
   };
 
   return (
