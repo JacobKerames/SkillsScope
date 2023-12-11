@@ -1,6 +1,6 @@
 namespace skill_scope_backend.Models;
-public class SkillQualification
+public class JobPostingLevel
 {
     public int JobPostingId { get; set; }
-    public int SkillId { get; set; }
+    public int JobLevelId { get; set; }
 }

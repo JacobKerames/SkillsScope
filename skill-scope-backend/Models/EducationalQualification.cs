@@ -9,5 +9,5 @@ public class EducationalQualification
 
 public enum EducationLevel
 {
-    None, HighSchool, Vocational, Associate, Bachelors, Masters, Doctorate, Professional
+    NoHighSchool, HighSchool, Certificate, SomeCollege, Associates, Bachelors, Masters, Doctorate, Professional
 }
