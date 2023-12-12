@@ -15,7 +15,4 @@ VALUES
 (2, 1, 2, 'Python', 'skill'),
 (2, NULL, 2, 'Software Engineer', 'job_title'),
 (3, 2, 3, 'Java', 'skill'),
-(4, 5, 5, 'C++', 'skill'),
-(5, 4, 13, 'C#', 'skill'),
-(5, 3, 4, 'JavaScript', 'skill'),
-(6, 7, 1, 'SQL', 'skill');
+(4, 5, 5, 'C++', 'skill');
