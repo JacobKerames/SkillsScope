@@ -1,17 +1,39 @@
 'use client'
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 type Skills = {
   skillName: string;
   percentage: number;
 };
 
-type SearchResultsProps = {
-  skills: Skills[];
-};
+const SearchResults = () => {
+  const [skills, setSkills] = useState<Skills[]>([]);
+  const searchParams = useSearchParams();
+  const keyword = searchParams.get('query');
 
-const SearchResults: React.FC<SearchResultsProps> = ({ skills }) => {
+  useEffect(() => {
+    const fetchData = async () => {
+      if (keyword) {
+        try {
+          const response = await fetch(`http://localhost:5277/search/skills/${encodeURIComponent(keyword)}`);
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          const data = await response.json();
+          setSkills(data);
+        } catch (error) {
+          console.error('Error fetching search results:', error);
+        }
+      }
+    };
+
+    if (keyword) {
+      fetchData();
+    }
+  }, [keyword]);
+
   return (
     <div>
       {skills.length > 0 ? (
