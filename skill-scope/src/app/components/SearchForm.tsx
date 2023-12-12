@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, FormEvent } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 const SearchForm = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -13,7 +13,7 @@ const SearchForm = () => {
       console.error('Search term is empty');
       return;
     }
-    router.push(`/search-results?query=${encodeURIComponent(searchTerm)}`);
+    router.push(`/search?title=${encodeURIComponent(searchTerm)}`);
   };
 
   return (
