@@ -14,7 +14,7 @@ const SearchResultsPage = () => {
     const fetchData = async () => {
       if (keyword) {
         try {
-          const response = await fetch(`http://localhost:5277/search/perform/${encodeURIComponent(keyword)}`);
+          const response = await fetch(`http://localhost:5277/search/skills/${encodeURIComponent(keyword)}`);
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }

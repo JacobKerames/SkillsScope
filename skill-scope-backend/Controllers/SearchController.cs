@@ -9,8 +9,8 @@ public class SearchController(IJobPostingRepository jobPostingRepository) : Cont
 {
     private readonly IJobPostingRepository _jobPostingRepository = jobPostingRepository;
 
-    [HttpGet("perform/{keyword}")]
-    public async Task<IActionResult> Get(string keyword)
+    [HttpGet("skills/{keyword}")]
+    public async Task<IActionResult> GetSkills(string keyword)
     {
         if (string.IsNullOrWhiteSpace(keyword))
         {
@@ -19,5 +19,17 @@ public class SearchController(IJobPostingRepository jobPostingRepository) : Cont
 
         var skills = await _jobPostingRepository.GetTitleSkillDesireAsync(keyword);
         return Ok(skills);
+    }
+
+    [HttpGet("education/{keyword}")]
+    public async Task<IActionResult> GetEducation(string keyword)
+    {
+        if (string.IsNullOrWhiteSpace(keyword))
+        {
+            return BadRequest("Search query cannot be empty.");
+        }
+
+        var educationStats = await _jobPostingRepository.GetTitleEducationDesireAsync(keyword);
+        return Ok(educationStats);
     }
 }
