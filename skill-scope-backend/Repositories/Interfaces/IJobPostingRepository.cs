@@ -1,13 +1,12 @@
 using skill_scope_backend.Models;
 
-namespace skill_scope_backend.Repositories.Interfaces
+namespace skill_scope_backend.Repositories
 {
     public interface IJobPostingRepository
     {
-        Task<JobPosting?> GetByIdAsync(int jobPostingId);
-        Task<IEnumerable<JobPosting>> GetAllAsync();
+        Task<IEnumerable<SkillDTO>> GetTitleSkillDesireAsync(string keyword);
+        Task<IEnumerable<EducationDTO>> GetTitleEducationDesireAsync(string keyword);
+        Task<IEnumerable<ExperienceDTO>> GetTitleExperienceDesireAsync(string keyword);
         Task<int> AddAsync(JobPosting jobPosting);
-        Task UpdateAsync(JobPosting jobPosting);
-        Task DeleteAsync(int jobPostingId);
     }
 }

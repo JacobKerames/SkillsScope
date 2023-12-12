@@ -1,5 +1,6 @@
 import React from 'react';
-import Layout, { metadata } from './layout';
+import Layout from './layout';
+import { metadata } from './metadata';
 import SearchForm from './components/SearchForm';
 
 const Home = () => {

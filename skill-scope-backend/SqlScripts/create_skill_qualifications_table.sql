@@ -4,7 +4,7 @@ CREATE TABLE skill_qualifications (
 	PRIMARY KEY (job_posting_id, skill_id)
 );
 
-INSERT INTO skills_qualifications
+INSERT INTO skill_qualifications
 (job_posting_id, skill_id)
 VALUES
 (1, 1),
