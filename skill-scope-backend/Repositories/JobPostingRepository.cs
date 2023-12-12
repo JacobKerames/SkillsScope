@@ -43,6 +43,22 @@ namespace skill_scope_backend.Repositories
             return educationStats;
         }
 
+        public async Task<IEnumerable<ExperienceDTO>> GetTitleExperienceDesireAsync(string keyword)
+        {
+            var sql = @"
+                SELECT eq.ExperienceReference, eq.YearsExperience,
+                    COUNT(*) * 100.0 / SUM(COUNT(*)) OVER() AS Percentage
+                FROM JobPostings jp
+                JOIN ExperienceQualifications eq ON jp.JobPostingId = eq.JobPostingId
+                WHERE CONTAINS(jp.Title, @Keyword)
+                GROUP BY eq.ExperienceReference, eq.YearsExperience";
+
+            using IDbConnection db = new NpgsqlConnection(_connectionString);
+            var experienceStats = await db.QueryAsync<ExperienceDTO>(sql, new { Keyword = keyword });
+
+            return experienceStats;
+        }
+
         public async Task<int> AddAsync(JobPosting jobPosting)
         {
             using IDbConnection db = new NpgsqlConnection(_connectionString);

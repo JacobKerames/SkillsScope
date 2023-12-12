@@ -32,4 +32,16 @@ public class SearchController(IJobPostingRepository jobPostingRepository) : Cont
         var educationStats = await _jobPostingRepository.GetTitleEducationDesireAsync(keyword);
         return Ok(educationStats);
     }
+
+    [HttpGet("experience/{keyword}")]
+    public async Task<IActionResult> GetExperience(string keyword)
+    {
+        if (string.IsNullOrWhiteSpace(keyword))
+        {
+            return BadRequest("Search query cannot be empty.");
+        }
+
+        var experienceStats = await _jobPostingRepository.GetTitleExperienceDesireAsync(keyword);
+        return Ok(experienceStats);
+    }
 }
