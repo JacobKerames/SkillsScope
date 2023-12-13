@@ -14,25 +14,33 @@ const SearchResults = () => {
   const keyword = searchParams.get('title');
 
   useEffect(() => {
+    const controller = new AbortController();
+    const { signal } = controller;
+
     const fetchData = async () => {
       if (keyword) {
         try {
-          console.log('Fetching search results for:', keyword);
-          const response = await fetch(`http://localhost:5277/search/skills/${encodeURIComponent(keyword)}`);
+          const response = await fetch(`http://localhost:5277/search/skills/${encodeURIComponent(keyword)}`, { signal });
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }
           const data = await response.json();
           setSkills(data);
         } catch (error) {
-          console.error('Error fetching search results:', error);
+          if (error instanceof Error && error.name === 'AbortError') {
+            console.log('Fetch aborted');
+          } else {
+            console.error('Error fetching search results:', error);
+          }
         }
       }
     };
 
-    if (keyword) {
-      fetchData();
-    }
+    fetchData();
+
+    return () => {
+      controller.abort();
+    };
   }, [keyword]);
 
   return (
@@ -46,7 +54,7 @@ const SearchResults = () => {
             ))}
         </ul>
       ) : (
-          <p>No skills found for this search query.</p>
+          <p>No skills found for {keyword}.</p>
       )}
     </div>
   );
