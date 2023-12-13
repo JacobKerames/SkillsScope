@@ -1,4 +1,4 @@
 export const metadata = {
   title: "SkillScope",
-  description: "Find the most-desired skills for your next job.",
+  description: "The skills you need for the job you want.",
 };
