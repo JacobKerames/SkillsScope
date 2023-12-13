@@ -64,12 +64,6 @@ const SearchResults = () => {
   const options = {
     indexAxis: 'y' as const,
     maintainAspectRatio: false,
-    layout: {
-      padding: {
-        right: 70,
-        left: 30,
-      }
-    },
     plugins: {
       legend: {
         display: false,
@@ -78,11 +72,12 @@ const SearchResults = () => {
         enabled: false,
       },
       datalabels: {
-        color: '#FFF',
-        align: 'end' as const,
+        color: '#000',
+        align: 'start' as const,
         anchor: 'end' as const,
         font: {
-          size: 13,
+          size: 15,
+          weight: 'bold' as const,
         },
         formatter: (value: number, context: any) => {
           return `${value.toFixed(2)}%`;
@@ -106,7 +101,7 @@ const SearchResults = () => {
           beginAtZero: true,
           color: '#FFF',
           font: {
-            size: 13,
+            size: 14,
           },
         },
       },
@@ -121,7 +116,7 @@ const SearchResults = () => {
   };
 
   return (
-    <div className="container mt-6 mx-auto flex flex-col justify-center items-center" style={{ height: calculateChartHeight(), maxWidth: '800px' }}>
+    <div className="container my-6 mx-auto flex flex-col justify-center items-center" style={{ height: calculateChartHeight(), maxWidth: '800px' }}>
       {skills.length > 0 ? (
           <Bar data={data} options={options} plugins={[ChartDataLabels]} />
       ) : (

@@ -21,8 +21,8 @@ const SearchResultsPage = () => {
         <p className="text-xl text-center mb-8">{metadata.description as string}</p>
         <SearchForm />
         <SearchFilters onFilterChange={handleFilterChange} />
+        <SearchResults />
       </div>
-      <SearchResults />
     </>
   );
 };
