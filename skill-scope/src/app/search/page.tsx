@@ -4,10 +4,10 @@ import SearchResults from './SearchResults';
 
 const SearchResultsPage = () => {
   return (
-    <Layout>
-        <h1 className="text-5xl text-center my-4">Search Results</h1>
+    <div>
+      <h1 className="text-5xl text-center my-4">Search Results</h1>
       <SearchResults />
-    </Layout>
+    </div>
   );
 };
 
