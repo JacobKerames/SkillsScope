@@ -2,6 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { Bar } from 'react-chartjs-2';
+import 'chart.js/auto';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+
 
 type Skills = {
   skillName: string;
@@ -24,7 +28,8 @@ const SearchResults = () => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }
-          const data = await response.json();
+          let data = await response.json();
+          data.sort((a: { percentage: number; }, b: { percentage: number; }) => b.percentage - a.percentage);
           setSkills(data);
         } catch (error) {
           if (error instanceof Error && error.name === 'AbortError') {
@@ -43,16 +48,82 @@ const SearchResults = () => {
     };
   }, [keyword]);
 
+  const data = {
+    labels: skills.map(skill => skill.skillName),
+    datasets: [
+      {
+        data: skills.map(skill => skill.percentage),
+        backgroundColor: '#15B8A6',
+        borderColor: 'gray',
+        borderWidth: 2,
+        barThickness: 30,
+      },
+    ],
+  };
+
+  const options = {
+    indexAxis: 'y' as const,
+    maintainAspectRatio: false,
+    layout: {
+      padding: {
+        right: 70,
+        left: 30,
+      }
+    },
+    plugins: {
+      legend: {
+        display: false,
+      },
+      tooltip: {
+        enabled: false,
+      },
+      datalabels: {
+        color: '#FFF',
+        align: 'end' as const,
+        anchor: 'end' as const,
+        font: {
+          size: 13,
+        },
+        formatter: (value: number, context: any) => {
+          return `${value.toFixed(2)}%`;
+        },
+      },
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false,
+        },
+        ticks:{
+          display: false,
+        },
+      },
+      y:{
+        grid: {
+          display: false,
+        },
+        ticks:{
+          beginAtZero: true,
+          color: '#FFF',
+          font: {
+            size: 13,
+          },
+        },
+      },
+    },
+  };
+
+  const calculateChartHeight = () => {
+    const heightPerSkill = 45;
+
+    const dynamicHeight = skills.length * heightPerSkill;
+    return dynamicHeight;
+  };
+
   return (
-    <div>
+    <div className="container mx-auto flex flex-col justify-center items-center" style={{ height: calculateChartHeight(), maxWidth: '800px' }}>
       {skills.length > 0 ? (
-        <ul>
-            {skills.map((skill, index) => (
-                <li key={skill.skillName || index}>
-                    {skill.skillName}: {skill.percentage}%
-                </li>
-            ))}
-        </ul>
+          <Bar data={data} options={options} plugins={[ChartDataLabels]} />
       ) : (
           <p>No skills found for {keyword}.</p>
       )}
