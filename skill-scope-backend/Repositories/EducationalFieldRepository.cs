@@ -2,6 +2,7 @@ using System.Data;
 using Dapper;
 using Npgsql;
 using skill_scope_backend.Models;
+using skill_scope_backend.Repositories.Interfaces;
 
 namespace skill_scope_backend.Repositories
 {

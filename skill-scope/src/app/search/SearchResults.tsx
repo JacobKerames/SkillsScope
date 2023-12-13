@@ -11,12 +11,13 @@ type Skills = {
 const SearchResults = () => {
   const [skills, setSkills] = useState<Skills[]>([]);
   const searchParams = useSearchParams();
-  const keyword = searchParams.get('query');
+  const keyword = searchParams.get('title');
 
   useEffect(() => {
     const fetchData = async () => {
       if (keyword) {
         try {
+          console.log('Fetching search results for:', keyword);
           const response = await fetch(`http://localhost:5277/search/skills/${encodeURIComponent(keyword)}`);
           if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -38,14 +39,14 @@ const SearchResults = () => {
     <div>
       {skills.length > 0 ? (
         <ul>
-          {skills.map((skill) => (
-            <li key={skill.skillName}>
-              {skill.skillName}: {skill.percentage}%
-            </li>
-          ))}
+            {skills.map((skill, index) => (
+                <li key={skill.skillName || index}>
+                    {skill.skillName}: {skill.percentage}%
+                </li>
+            ))}
         </ul>
       ) : (
-        <p>No skills found for this search query.</p>
+          <p>No skills found for this search query.</p>
       )}
     </div>
   );

@@ -1,7 +1,7 @@
 import React from 'react';
 import Layout from './layout';
 import { metadata } from './metadata';
-import SearchForm from './components/SearchForm';
+import SearchForm from './SearchForm';
 
 const Home = () => {
   return (

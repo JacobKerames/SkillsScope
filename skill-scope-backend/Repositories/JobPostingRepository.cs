@@ -5,20 +5,20 @@ using skill_scope_backend.Models;
 
 namespace skill_scope_backend.Repositories
 {
-    public class JobPostingRepository(string connectionString) : IJobPostingRepository
+    public class JobPostingRepository(IConfiguration configuration) : IJobPostingRepository
     {
-        private readonly string _connectionString = connectionString;
+        private readonly string? _connectionString = configuration.GetConnectionString("DefaultConnection");
 
         public async Task<IEnumerable<SkillDTO>> GetTitleSkillDesireAsync(string keyword)
         {
             var sql = @"
-                SELECT s.SkillId, s.SkillName, 
+                SELECT s.skill_name AS SkillName, 
                     COUNT(*) * 100.0 / SUM(COUNT(*)) OVER() AS Percentage
-                FROM JobPostings jp
-                JOIN SkillQualifications sq ON jp.JobPostingId = sq.JobPostingId
-                JOIN Skills s ON sq.SkillId = s.SkillId
-                WHERE CONTAINS(jp.Title, @Keyword)
-                GROUP BY s.SkillId, s.SkillName";
+                FROM job_postings jp
+                JOIN skill_qualifications sq ON jp.job_posting_id = sq.job_posting_id
+                JOIN skills s ON sq.skill_id = s.skill_id
+                WHERE to_tsvector('english', jp.title) @@ to_tsquery('english', @Keyword)
+                GROUP BY s.skill_name";
 
             using IDbConnection db = new NpgsqlConnection(_connectionString);
             var skillStats = await db.QueryAsync<SkillDTO>(sql, new { Keyword = keyword });

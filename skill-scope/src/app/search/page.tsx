@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from '../layout';
-import SearchResults from '../components/SearchResults';
+import SearchResults from './SearchResults';
 
 const SearchResultsPage = () => {
   return (
