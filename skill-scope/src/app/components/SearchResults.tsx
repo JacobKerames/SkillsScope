@@ -121,7 +121,7 @@ const SearchResults = () => {
   };
 
   return (
-    <div className="container mx-auto flex flex-col justify-center items-center" style={{ height: calculateChartHeight(), maxWidth: '800px' }}>
+    <div className="container mt-6 mx-auto flex flex-col justify-center items-center" style={{ height: calculateChartHeight(), maxWidth: '800px' }}>
       {skills.length > 0 ? (
           <Bar data={data} options={options} plugins={[ChartDataLabels]} />
       ) : (
