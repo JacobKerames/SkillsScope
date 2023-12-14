@@ -1,50 +1,44 @@
-'use client'
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { Bar } from 'react-chartjs-2';
-import { Filters } from './SearchFilters';
-import 'chart.js/auto';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import BarChart from "./BarChart";
+import ResultsTypeButtons from "./ResultsTypeButtons";
 
-type Skills = {
+export type Skills = {
   skillName: string;
   percentage: number;
 };
 
-const SearchResults = ({ filters }: { filters: Filters }) => {
+const SearchResults = () => {
   const [skills, setSkills] = useState<Skills[]>([]);
   const searchParams = useSearchParams();
-  const keyword = searchParams.get('title');
+  const keyword = searchParams.get("title");
 
   useEffect(() => {
     const controller = new AbortController();
     const { signal } = controller;
 
     const fetchData = async () => {
-      const queryParams = new URLSearchParams();
       if (keyword) {
-        queryParams.append('title', encodeURIComponent(keyword));
-      }
-      for (const key in filters) {
-        if (filters[key]) {
-          queryParams.append(key, encodeURIComponent(filters[key]));
-        }
-      }
-
-      try {
-        const response = await fetch(`http://localhost:5277/search/skills/${queryParams.toString()}`, { signal });
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        let data = await response.json();
-        data.sort((a: { percentage: number; }, b: { percentage: number; }) => b.percentage - a.percentage);
-        setSkills(data);
-      } catch (error) {
-        if (error instanceof Error && error.name === 'AbortError') {
-          console.log('Fetch aborted');
-        } else {
-          console.error('Error fetching search results:', error);
+        try {
+          const response = await fetch(
+            `http://localhost:5277/search/skills/${encodeURIComponent(
+              keyword
+            )}`,
+            { signal }
+          );
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          let data = await response.json();
+          setSkills(data);
+        } catch (error) {
+          if (error instanceof Error && error.name === "AbortError") {
+            console.log("Fetch aborted");
+          } else {
+            console.error("Error fetching search results:", error);
+          }
         }
       }
     };
@@ -54,93 +48,30 @@ const SearchResults = ({ filters }: { filters: Filters }) => {
     return () => {
       controller.abort();
     };
-  }, [keyword, filters]);
+  }, [keyword]);
 
-  const data = {
-    labels: skills.map(skill => skill.skillName),
-    datasets: [
-      {
-        data: skills.map(skill => skill.percentage),
-        backgroundColor: '#991b1b',
-        borderColor: 'gray',
-        borderWidth: 0,
-        borderRadius: 5,
-        barThickness: 30,
-      },
-    ],
-  };
-
-  const options = {
-    indexAxis: 'y' as const,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: false,
-      },
-      tooltip: {
-        enabled: false,
-      },
-      datalabels: {
-        color: '#E6E6E6',
-        align: 'start' as const,
-        anchor: 'end' as const,
-        font: {
-          size: 15,
-          weight: 'bold' as const,
-        },
-        formatter: (value: number, context: any) => {
-          return `${value.toFixed(2)}%`;
-        },
-      },
-    },
-    scales: {
-      x: {
-        grid: {
-          display: false,
-        },
-        ticks:{
-          display: false,
-        },
-      },
-      y:{
-        grid: {
-          display: false,
-        },
-        ticks:{
-          beginAtZero: true,
-          color: '#FFF',
-          font: {
-            size: 15,
-          },
-        },
-      },
-    },
-  };
-
-  const calculateChartHeight = () => {
-    const heightPerSkill = 45;
-
-    const dynamicHeight = skills.length * heightPerSkill;
-    return dynamicHeight;
-  };
-
-  return (
-    <>
-      {skills.length > 0 ? (
-        <div>
-          <div className="container mx-auto flex flex-col p-6" style={{ maxWidth: '800px' }}>
-            <p className="text-xl text-left">Top skills for '{keyword || "your search"}' jobs</p>
-          </div><div className="container mb-20 mx-auto flex flex-col justify-center items-center px-6" style={{ height: calculateChartHeight(), maxWidth: '800px' }}>
-            <Bar data={data} options={options} plugins={[ChartDataLabels]} />
+  const renderSkillsContent = () => {
+    if (skills.length > 0) {
+      return (
+        <>
+          <ResultsTypeButtons />
+          <div className="container mx-auto flex flex-col p-6" style={{ maxWidth: "800px" }}>
+            <p className="text-xl text-left">
+              Top skills for '{keyword || "your search"}' jobs
+            </p>
+            <BarChart skills={skills} />
           </div>
-        </div>
-      ) : (
-        <div className="container mb-20 mx-auto flex flex-col justify-center items-center px-6">
-          <p className="text-xl">No skills found for '{keyword || 'your search'}'.</p>
-        </div>
-      )}
-    </>
-  );
+        </>
+      );
+    }
+
+    return (
+      <div className="container mb-20 mx-auto flex flex-col justify-center items-center px-6">
+        <p className="text-xl">No skills found for '{keyword || "your search"}'.</p>
+      </div>
+    );
+  };
+  return <>{renderSkillsContent()}</>;
 };
 
 export default SearchResults;
