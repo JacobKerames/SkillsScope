@@ -53,15 +53,13 @@ const SearchResults = () => {
   const renderSkillsContent = () => {
     if (skills.length > 0) {
       return (
-        <>
+        <div className="container mx-auto flex flex-col p-6" style={{ maxWidth: "800px" }}>
           <ResultsTypeButtons />
-          <div className="container mx-auto flex flex-col p-6" style={{ maxWidth: "800px" }}>
-            <p className="text-xl text-left">
-              Top skills for '{keyword || "your search"}' jobs
-            </p>
-            <BarChart skills={skills} />
-          </div>
-        </>
+          <p className="text-xl text-left">
+            Top skills for '{keyword || "your search"}' jobs
+          </p>
+          <BarChart skills={skills} />
+        </div>
       );
     }
 

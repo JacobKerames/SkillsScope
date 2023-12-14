@@ -79,10 +79,7 @@ const BarChart = ({ skills }: BarChartProps) => {
   };
 
   return (
-    <div
-      className="container mb-20 mx-auto flex flex-col justify-center items-center px-6"
-      style={{ height: calculateChartHeight(), maxWidth: "800px" }}
-    >
+    <div style={{ height: calculateChartHeight(), maxWidth: "800px" }}>
       <Bar data={data} options={options} plugins={[ChartDataLabels]} />
     </div>
   );

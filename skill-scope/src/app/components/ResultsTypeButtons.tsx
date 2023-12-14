@@ -12,21 +12,21 @@ const ResultsTypeButtons = () => {
   ];
 
   return (
-    <div className="grid grid-cols-3 gap-4 mt-20">
-      {tabs.map((tab) => (
-        <button
-          key={tab.value}
-          onClick={() => setActiveTab(tab.value)}
-          className={`py-2 px-4 text-md font-medium ${
-            activeTab === tab.value
-              ? "border-b-2 border-red-500 text-white"
-              : "text-gray-400 hover:text-gray-300"
-          }`}
-        >
-          {tab.name}
-        </button>
-      ))}
-    </div>
+		<div className="grid grid-cols-3 my-12">
+			{tabs.map((tab) => (
+				<button
+					key={tab.value}
+					onClick={() => setActiveTab(tab.value)}
+					className={`py-2 text-md font-medium ${
+						activeTab === tab.value
+							? "border-b-2 border-red-500 text-white"
+							: "text-gray-400 hover:text-gray-300"
+					}`}
+				>
+					{tab.name}
+				</button>
+			))}
+		</div>
   );
 };
 

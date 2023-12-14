@@ -17,7 +17,7 @@ namespace skill_scope_backend.Repositories
                 FROM job_postings jp
                 JOIN skill_qualifications sq ON jp.job_posting_id = sq.job_posting_id
                 JOIN skills s ON sq.skill_id = s.skill_id
-                WHERE to_tsvector('english', jp.title) @@ plainto_tsquery('english', @Keyword);";
+                WHERE to_tsvector('english', jp.title) @@ plainto_tsquery('english', @Keyword)";
 
             // Filter by time frame, converting it to actual dates if necessary
             if (!string.IsNullOrEmpty(parameters.TimeFrame))
@@ -45,7 +45,7 @@ namespace skill_scope_backend.Repositories
                 sql += " AND jp.level = @Level";
             }
 
-            sql += " GROUP BY s.skill_name";
+            sql += " GROUP BY s.skill_name;";
 
             using IDbConnection db = new NpgsqlConnection(_connectionString);
             var skillStats = await db.QueryAsync<SkillDTO>(sql, new 
