@@ -36,7 +36,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onFilterChange }) => {
   };
 
   return (
-    <div className="bg-transparent mt-6 p-6 rounded-lg shadow space-y-4">
+    <div className="bg-transparent p-6 rounded-lg shadow space-y-4">
       <label className="block text-sm font-medium text-white">Filter by:</label>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="flex items-center border-b border-teal-500 py-2">
@@ -101,7 +101,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onFilterChange }) => {
           <input
             className="appearance-none bg-transparent border-none w-full text-white mr-3 py-1 px-2 leading-tight focus:outline-none"
             type="text"
-            placeholder="Level"
+            placeholder="Experience Level"
             name="level"
             value={filters.level}
             onChange={handleChange}

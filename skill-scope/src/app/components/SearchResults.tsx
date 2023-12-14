@@ -116,13 +116,18 @@ const SearchResults = () => {
   };
 
   return (
-    <div className="container my-6 mx-auto flex flex-col justify-center items-center" style={{ height: calculateChartHeight(), maxWidth: '800px' }}>
-      {skills.length > 0 ? (
-          <Bar data={data} options={options} plugins={[ChartDataLabels]} />
-      ) : (
-          <p>No skills found for {keyword}.</p>
-      )}
-    </div>
+    <>
+      <div className="container mt-20 mx-auto flex flex-col p-6" style={{ maxWidth: '800px' }}>
+        <p className="text-xl text-left">Top skills for job titles matching '{keyword}'</p>
+      </div>
+      <div className="container mb-20 mx-auto flex flex-col justify-center items-center px-6" style={{ height: calculateChartHeight(), maxWidth: '800px' }}>
+        {skills.length > 0 ? (
+            <Bar data={data} options={options} plugins={[ChartDataLabels]} />
+        ) : (
+            <p>No skills found for {keyword}.</p>
+        )}
+      </div>
+    </>
   );
 };
 
