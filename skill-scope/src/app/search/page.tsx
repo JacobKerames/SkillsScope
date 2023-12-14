@@ -5,13 +5,18 @@ import SearchResults from '../components/SearchResults';
 import SearchForm from '../components/SearchForm';
 import SearchFilters from '../components/SearchFilters';
 import { metadata } from '../metadata';
+import { Filters } from '../components/SearchFilters';
 
 const SearchResultsPage = () => {
-  const [filters, setFilters] = useState({});
+  const [filters, setFilters] = useState<Filters>({
+    timeFrame: '',
+    company: '',
+    location: '',
+    level: ''
+  });
 
-  const handleFilterChange = (newFilters: React.SetStateAction<{}>) => {
+  const handleFilterChange = (newFilters: React.SetStateAction<Filters>) => {
     setFilters(newFilters);
-    // You might want to trigger a new search here.
   };
 
   return (
@@ -22,7 +27,7 @@ const SearchResultsPage = () => {
         <SearchForm />
         <SearchFilters onFilterChange={handleFilterChange} />
       </div>
-      <SearchResults />
+      <SearchResults filters={filters} />
     </>
   );
 };

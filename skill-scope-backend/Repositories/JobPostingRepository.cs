@@ -9,7 +9,7 @@ namespace skill_scope_backend.Repositories
     {
         private readonly string? _connectionString = configuration.GetConnectionString("DefaultConnection");
 
-        public async Task<IEnumerable<SkillDTO>> GetTitleSkillDesireAsync(string keyword)
+        public async Task<IEnumerable<SkillDTO>> GetTitleSkillDesireAsync(SkillSearchDTO parameters)
         {
             var sql = @"
                 SELECT s.skill_name AS SkillName, 
@@ -17,13 +17,72 @@ namespace skill_scope_backend.Repositories
                 FROM job_postings jp
                 JOIN skill_qualifications sq ON jp.job_posting_id = sq.job_posting_id
                 JOIN skills s ON sq.skill_id = s.skill_id
-                WHERE to_tsvector('english', jp.title) @@ to_tsquery('english', @Keyword)
-                GROUP BY s.skill_name";
+                WHERE to_tsvector('english', jp.title) @@ plainto_tsquery('english', @Keyword);";
+
+            // Filter by time frame, converting it to actual dates if necessary
+            if (!string.IsNullOrEmpty(parameters.TimeFrame))
+            {
+                TimeFrameConverter(parameters);
+                sql += " AND jp.posted_date >= @StartDate AND jp.posted_date <= @EndDate";
+            }
+
+            // Additional filters...
+            if (!string.IsNullOrEmpty(parameters.Company))
+            {
+                sql += " AND jp.company_id IN (SELECT company_id FROM companies WHERE name ILIKE @Company)";
+            }
+
+            if (!string.IsNullOrEmpty(parameters.Location))
+            {
+                sql += " AND jp.city_id IN (SELECT city_id FROM cities WHERE name ILIKE @City)";
+            }
+
+            // Similar for State and Country...
+
+            if (!string.IsNullOrEmpty(parameters.Level))
+            {
+                // Assuming 'level' is a column in your job_postings table
+                sql += " AND jp.level = @Level";
+            }
+
+            sql += " GROUP BY s.skill_name";
 
             using IDbConnection db = new NpgsqlConnection(_connectionString);
-            var skillStats = await db.QueryAsync<SkillDTO>(sql, new { Keyword = keyword });
+            var skillStats = await db.QueryAsync<SkillDTO>(sql, new 
+            {
+                parameters.Keyword,
+                parameters.StartDate,
+                parameters.EndDate,
+                Company = $"%{parameters.Company}%",
+                Location = $"%{parameters.Location}%",
+                parameters.Level
+            });
 
             return skillStats;
+        }
+
+        public static void TimeFrameConverter(SkillSearchDTO parameters)
+        {
+            parameters.EndDate = DateTime.Today;
+
+            switch (parameters.TimeFrame)
+            {
+                case "pastMonth":
+                    parameters.StartDate = parameters.EndDate.Value.AddMonths(-1);
+                    break;
+                case "pastYear":
+                    parameters.StartDate = parameters.EndDate.Value.AddYears(-1);
+                    break;
+                case "pastTwoYears":
+                    parameters.StartDate = parameters.EndDate.Value.AddYears(-2);
+                    break;
+                case "pastFiveYears":
+                    parameters.StartDate = parameters.EndDate.Value.AddYears(-5);
+                    break;
+                default:
+                    // Handle default case or invalid values
+                    break;
+            }
         }
 
         public async Task<IEnumerable<EducationDTO>> GetTitleEducationDesireAsync(string keyword)

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using skill_scope_backend.Models;
 using skill_scope_backend.Repositories;
 
 namespace skill_scope_backend.Controllers;
@@ -9,15 +10,15 @@ public class SearchController(IJobPostingRepository jobPostingRepository) : Cont
 {
     private readonly IJobPostingRepository _jobPostingRepository = jobPostingRepository;
 
-    [HttpGet("skills/{keyword}")]
-    public async Task<IActionResult> GetSkills(string keyword)
+    [HttpGet("skills")]
+    public async Task<IActionResult> GetSkills([FromQuery] SkillSearchDTO parameters)
     {
-        if (string.IsNullOrWhiteSpace(keyword))
+        if (string.IsNullOrWhiteSpace(parameters.Keyword))
         {
             return BadRequest("Search query cannot be empty.");
         }
 
-        var skills = await _jobPostingRepository.GetTitleSkillDesireAsync(keyword);
+        var skills = await _jobPostingRepository.GetTitleSkillDesireAsync(parameters);
         return Ok(skills);
     }
 

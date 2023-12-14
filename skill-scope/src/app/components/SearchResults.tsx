@@ -3,16 +3,16 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Bar } from 'react-chartjs-2';
+import { Filters } from './SearchFilters';
 import 'chart.js/auto';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-
 
 type Skills = {
   skillName: string;
   percentage: number;
 };
 
-const SearchResults = () => {
+const SearchResults = ({ filters }: { filters: Filters }) => {
   const [skills, setSkills] = useState<Skills[]>([]);
   const searchParams = useSearchParams();
   const keyword = searchParams.get('title');
@@ -22,21 +22,29 @@ const SearchResults = () => {
     const { signal } = controller;
 
     const fetchData = async () => {
+      const queryParams = new URLSearchParams();
       if (keyword) {
-        try {
-          const response = await fetch(`http://localhost:5277/search/skills/${encodeURIComponent(keyword)}`, { signal });
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          let data = await response.json();
-          data.sort((a: { percentage: number; }, b: { percentage: number; }) => b.percentage - a.percentage);
-          setSkills(data);
-        } catch (error) {
-          if (error instanceof Error && error.name === 'AbortError') {
-            console.log('Fetch aborted');
-          } else {
-            console.error('Error fetching search results:', error);
-          }
+        queryParams.append('title', encodeURIComponent(keyword));
+      }
+      for (const key in filters) {
+        if (filters[key]) {
+          queryParams.append(key, encodeURIComponent(filters[key]));
+        }
+      }
+
+      try {
+        const response = await fetch(`http://localhost:5277/search/skills/${queryParams.toString()}`, { signal });
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        let data = await response.json();
+        data.sort((a: { percentage: number; }, b: { percentage: number; }) => b.percentage - a.percentage);
+        setSkills(data);
+      } catch (error) {
+        if (error instanceof Error && error.name === 'AbortError') {
+          console.log('Fetch aborted');
+        } else {
+          console.error('Error fetching search results:', error);
         }
       }
     };
@@ -46,7 +54,7 @@ const SearchResults = () => {
     return () => {
       controller.abort();
     };
-  }, [keyword]);
+  }, [keyword, filters]);
 
   const data = {
     labels: skills.map(skill => skill.skillName),
@@ -56,6 +64,7 @@ const SearchResults = () => {
         backgroundColor: '#991b1b',
         borderColor: 'gray',
         borderWidth: 0,
+        borderRadius: 5,
         barThickness: 30,
       },
     ],
@@ -120,7 +129,7 @@ const SearchResults = () => {
       {skills.length > 0 ? (
         <div>
           <div className="container mx-auto flex flex-col p-6" style={{ maxWidth: '800px' }}>
-            <p className="text-xl text-left">Top skills for job titles matching '{keyword || "your search"}'</p>
+            <p className="text-xl text-left">Top skills for '{keyword || "your search"}' jobs</p>
           </div><div className="container mb-20 mx-auto flex flex-col justify-center items-center px-6" style={{ height: calculateChartHeight(), maxWidth: '800px' }}>
             <Bar data={data} options={options} plugins={[ChartDataLabels]} />
           </div>

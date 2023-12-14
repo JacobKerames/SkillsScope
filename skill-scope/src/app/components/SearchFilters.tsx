@@ -2,12 +2,11 @@
 
 import React, { useState } from 'react';
 
-type Filters = {
+export type Filters = {
+  [key: string]: string;
   timeFrame: string;
   company: string;
-  city: string;
-  state: string;
-  country: string;
+  location: string;
   level: string;
 };
 
@@ -20,9 +19,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onFilterChange }) => {
   const [filters, setFilters] = useState({
     timeFrame: '',
     company: '',
-    city: '',
-    state: '',
-    country: '',
+    location: '',
     level: ''
   });
 
@@ -34,12 +31,11 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onFilterChange }) => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFilters(prevFilters => ({
-      ...prevFilters,
-      [name]: value
-    }));
-
-    onFilterChange({ ...filters, [name]: value });
+    setFilters(prevFilters => {
+      const updatedFilters = { ...prevFilters, [name]: value };
+      onFilterChange(updatedFilters);
+      return updatedFilters;
+    });
   };
 
   return (
@@ -79,7 +75,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onFilterChange }) => {
               type="text"
               placeholder="City, state, or country"
               name="location"
-              value={filters.city}
+              value={filters.location}
               onChange={handleChange}
             />
           </div>
