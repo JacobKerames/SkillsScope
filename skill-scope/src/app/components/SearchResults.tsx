@@ -53,9 +53,9 @@ const SearchResults = () => {
     datasets: [
       {
         data: skills.map(skill => skill.percentage),
-        backgroundColor: '#15B8A6',
+        backgroundColor: '#991b1b',
         borderColor: 'gray',
-        borderWidth: 2,
+        borderWidth: 0,
         barThickness: 30,
       },
     ],
@@ -72,7 +72,7 @@ const SearchResults = () => {
         enabled: false,
       },
       datalabels: {
-        color: '#000',
+        color: '#E6E6E6',
         align: 'start' as const,
         anchor: 'end' as const,
         font: {
@@ -101,7 +101,7 @@ const SearchResults = () => {
           beginAtZero: true,
           color: '#FFF',
           font: {
-            size: 14,
+            size: 15,
           },
         },
       },
@@ -117,16 +117,19 @@ const SearchResults = () => {
 
   return (
     <>
-      <div className="container mt-20 mx-auto flex flex-col p-6" style={{ maxWidth: '800px' }}>
-        <p className="text-xl text-left">Top skills for job titles matching '{keyword}'</p>
-      </div>
-      <div className="container mb-20 mx-auto flex flex-col justify-center items-center px-6" style={{ height: calculateChartHeight(), maxWidth: '800px' }}>
-        {skills.length > 0 ? (
+      {skills.length > 0 ? (
+        <div>
+          <div className="container mx-auto flex flex-col p-6" style={{ maxWidth: '800px' }}>
+            <p className="text-xl text-left">Top skills for job titles matching '{keyword || "your search"}'</p>
+          </div><div className="container mb-20 mx-auto flex flex-col justify-center items-center px-6" style={{ height: calculateChartHeight(), maxWidth: '800px' }}>
             <Bar data={data} options={options} plugins={[ChartDataLabels]} />
-        ) : (
-            <p>No skills found for {keyword}.</p>
-        )}
-      </div>
+          </div>
+        </div>
+      ) : (
+        <div className="container mb-20 mx-auto flex flex-col justify-center items-center px-6">
+          <p className="text-xl">No skills found for '{keyword || 'your search'}'.</p>
+        </div>
+      )}
     </>
   );
 };
