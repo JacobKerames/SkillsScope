@@ -3,7 +3,6 @@
 import React from 'react';
 import { metadata } from '../metadata';
 import SearchForm from '../components/SearchForm';
-import SearchFilters from '../components/SearchFilters';
 import SearchResults from '../components/SearchResults';
 
 const SearchResultsPage = () => {
@@ -13,7 +12,6 @@ const SearchResultsPage = () => {
         <h1 className="text-5xl text-center mb-4">{metadata.title as string}</h1>
         <p className="text-xl text-center mb-8">{metadata.description as string}</p>
         <SearchForm />
-        <SearchFilters />
       </div>
       <SearchResults />
     </>

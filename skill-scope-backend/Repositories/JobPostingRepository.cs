@@ -19,17 +19,20 @@ namespace skill_scope_backend.Repositories
                 JOIN skills s ON sq.skill_id = s.skill_id
                 WHERE to_tsvector('english', jp.title) @@ plainto_tsquery('english', @Keyword)";
 
-            // Filter by time frame, converting it to actual dates if necessary
             if (!string.IsNullOrEmpty(parameters.TimeFrame))
             {
                 TimeFrameConverter(parameters);
                 sql += " AND jp.posted_date >= @StartDate AND jp.posted_date <= @EndDate";
             }
 
-            // Additional filters...
             if (!string.IsNullOrEmpty(parameters.Company))
             {
-                sql += " AND jp.company_id IN (SELECT company_id FROM companies WHERE name ILIKE @Company)";
+                sql += @"
+                    AND jp.company_id
+                    IN (
+                        SELECT company_id FROM companies c
+                        WHERE to_tsvector('english', c.company_name) @@ plainto_tsquery('english', @Company)
+                    )";
             }
 
             if (!string.IsNullOrEmpty(parameters.Location))
@@ -37,11 +40,8 @@ namespace skill_scope_backend.Repositories
                 sql += " AND jp.city_id IN (SELECT city_id FROM cities WHERE name ILIKE @City)";
             }
 
-            // Similar for State and Country...
-
             if (!string.IsNullOrEmpty(parameters.Level))
             {
-                // Assuming 'level' is a column in your job_postings table
                 sql += " AND jp.level = @Level";
             }
 

@@ -1,31 +1,34 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 
 export type Filters = {
-  [key: string]: string;
   timeFrame: string;
   company: string;
   location: string;
   level: string;
 };
 
-const SearchFilters = () => {
-  const [filters, setFilters] = useState({
-    timeFrame: "",
-    company: "",
-    location: "",
-    level: "",
-  });
+type SearchFiltersProps = {
+  setFilters: (name: string, value: string) => void;
+  currentFilters: Filters;
+};
 
-  const handleChange = (
-    event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
-  ) => {
+const SearchFilters: React.FC<SearchFiltersProps> = ({ setFilters, currentFilters }) => {
+  const [localFilters, setLocalFilters] = React.useState<Filters>(currentFilters);
+
+  useEffect(() => {
+    setLocalFilters(currentFilters);
+  }, [currentFilters]);
+
+  const handleChange = (event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
     const { name, value } = event.target;
-    setFilters({
-      ...filters,
-      [name]: value,
-    });
+    const updatedFilters = {
+      ...localFilters,
+      [name]: value
+    };
+    setLocalFilters(updatedFilters);
+    setFilters(name, value);
   };
 
   return (
@@ -37,7 +40,7 @@ const SearchFilters = () => {
           <select
             className="appearance-none bg-transparent border-none w-full text-white mr-3 py-1 px-2 leading-tight focus:outline-none"
             name="timeFrame"
-            value={filters.timeFrame}
+            value={localFilters.timeFrame}
             onChange={handleChange}
           >
             {/* ... Time Frame select input ... */}
@@ -58,7 +61,7 @@ const SearchFilters = () => {
             type="text"
             placeholder="Company"
             name="company"
-            value={filters.company}
+            value={localFilters.company}
             onChange={handleChange}
           />
         </div>
@@ -70,7 +73,7 @@ const SearchFilters = () => {
             type="text"
             placeholder="City, state, or country"
             name="location"
-            value={filters.location}
+            value={localFilters.location}
             onChange={handleChange}
           />
         </div>
@@ -80,7 +83,7 @@ const SearchFilters = () => {
           <select
             className="appearance-none bg-transparent border-none w-full text-white mr-3 py-1 px-2 leading-tight focus:outline-none"
             name="level"
-            value={filters.level}
+            value={localFilters.level}
             onChange={handleChange}
           >
             {/* ... Level select input ... */}
