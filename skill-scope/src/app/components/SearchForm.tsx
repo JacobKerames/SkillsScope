@@ -23,43 +23,63 @@ const SearchForm = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       const searchParams = new URLSearchParams(window.location.search);
-      setSearchTerm(searchParams.get('title') || '');
+      setSearchTerm(searchParams.get("title") || "");
       setFilters({
-        timeFrame: searchParams.get('timeFrame') || '',
-        company: searchParams.get('company') || '',
-        location: searchParams.get('location') || '',
-        level: searchParams.get('level') || ''
+        timeFrame: searchParams.get("timeFrame") || "",
+        company: searchParams.get("company") || "",
+        location: searchParams.get("location") || "",
+        level: searchParams.get("level") || "",
       });
     }
   }, []);
 
   useEffect(() => {
-    const queryParams = new URLSearchParams();
-  
-    if (searchTerm.trim()) {
-      queryParams.append("title", encodeURIComponent(searchTerm));
-    }
+    if (
+      typeof window !== "undefined" &&
+      window.location.pathname === "/search"
+    ) {
+      const queryParams = new URLSearchParams();
 
-    for (const [key, value] of Object.entries(filters)) {
-      if (value && value.trim()) {
-        queryParams.append(key, value);
+      if (searchTerm.trim()) {
+        queryParams.append("title", encodeURIComponent(searchTerm));
       }
-    }
 
-    router.push(`/search?${queryParams.toString()}`);
+      for (const [key, value] of Object.entries(filters)) {
+        if (value && value.trim()) {
+          queryParams.append(key, value);
+        }
+      }
+
+      router.push(`/search?${queryParams.toString()}`);
+    }
   }, [searchTerm, filters, router]);
 
   const handleSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    const queryParams = new URLSearchParams();
+
+    if (searchTerm.trim()) {
+      queryParams.append("title", encodeURIComponent(searchTerm));
+    }
+
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value && value.trim()) {
+        queryParams.append(key, value);
+      }
+    });
+
+    // Redirect to the search page with the query parameters
+    router.push(`/search?${queryParams.toString()}`);
   };
 
   const handleFilterChange = (name: string, value: string) => {
     const newFilters = { ...filters, [name]: value };
     updateFilters(newFilters);
   };
-  
+
   return (
     <>
       <form onSubmit={handleSearch} className="w-full max-w-md">
