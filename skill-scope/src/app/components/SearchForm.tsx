@@ -13,6 +13,7 @@ export type Filters = {
 
 const SearchForm = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [filters, setFilters] = useState<Filters>({
     timeFrame: "",
     company: "",
@@ -25,7 +26,7 @@ const SearchForm = () => {
     const queryParams = new URLSearchParams();
 
     if (searchTerm.trim()) {
-      queryParams.append("title", encodeURIComponent(searchTerm));
+      queryParams.append("title", encodeURIComponent(searchTerm.trim()));
     }
 
     Object.entries(filters).forEach(([key, value]) => {
@@ -40,7 +41,7 @@ const SearchForm = () => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const searchParams = new URLSearchParams(window.location.search);
-      setSearchTerm(searchParams.get("title") || "");
+      setSearchTerm(decodeURIComponent(searchParams.get("title") || ""));
       setFilters({
         timeFrame: searchParams.get("timeFrame") || "",
         company: searchParams.get("company") || "",
@@ -56,14 +57,28 @@ const SearchForm = () => {
       window.location.pathname === "/search"
     ) {
       const queryParams = buildQueryParams();
-      router.replace(`/search?${queryParams.toString()}`);
+      router.push(`/search?${queryParams.toString()}`);
     }
   }, [searchTerm, filters, router, buildQueryParams]);
 
   const handleSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (searchTerm.includes("%")) {
+      setErrorMessage("The search term cannot contain the '%' symbol.");
+      return;
+    }
+    setErrorMessage("");
     const queryParams = buildQueryParams();
     router.push(`/search?${queryParams.toString()}`);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value.includes("%")) {
+      setErrorMessage("The search term cannot contain the '%' symbol.");
+    } else {
+      setErrorMessage("");
+    }
+    setSearchTerm(e.target.value);
   };
 
   const handleFilterChange = (name: string, value: string) => {
@@ -81,7 +96,7 @@ const SearchForm = () => {
             placeholder="Search job titles..."
             aria-label="Job title search"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={handleInputChange}
           />
           <button
             className="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded"
@@ -90,6 +105,7 @@ const SearchForm = () => {
             Search
           </button>
         </div>
+        {errorMessage && <div className="text-red-500">{errorMessage}</div>}
       </form>
       <SearchFilters setFilters={handleFilterChange} currentFilters={filters} />
     </>

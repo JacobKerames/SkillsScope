@@ -19,7 +19,7 @@ const SearchResults = () => {
   const [skills, setSkills] = useState<Skills[]>([]);
   const searchParams = useSearchParams();
 
-  const title = getFirstParamValue(searchParams.get("title"), "your search");
+  const title = decodeURIComponent(getFirstParamValue(searchParams.get("title"), "your search"));
   const timeFrame = getFirstParamValue(searchParams.get("timeFrame"));
   const company = getFirstParamValue(searchParams.get("company"));
   const location = getFirstParamValue(searchParams.get("location"));
@@ -77,7 +77,7 @@ const SearchResults = () => {
         >
           <ResultsTypeButtons />
           <p className="text-xl text-left">
-            Top skills for '{title || "your search"}' jobs
+            Top skills for {title || "your search"} jobs
           </p>
           <BarChart skills={skills} />
         </div>
@@ -87,7 +87,7 @@ const SearchResults = () => {
     return (
       <div className="container mb-20 mx-auto flex flex-col justify-center items-center px-6">
         <p className="text-xl">
-          No skills found for '{title || "your search"}'.
+          No skills found for {title || "your search"}.
         </p>
       </div>
     );
