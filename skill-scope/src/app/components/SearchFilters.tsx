@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export type Filters = {
   timeFrame: string;
@@ -18,8 +18,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
   setFilters,
   currentFilters,
 }) => {
-  const [localFilters, setLocalFilters] =
-    React.useState<Filters>(currentFilters);
+  const [localFilters, setLocalFilters] = useState<Filters>(currentFilters);
 
   useEffect(() => {
     setLocalFilters(currentFilters);
@@ -29,12 +28,25 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
     event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
   ) => {
     const { name, value } = event.target;
-    const updatedFilters = {
-      ...localFilters,
+    setLocalFilters((prevFilters) => ({
+      ...prevFilters,
       [name]: value,
-    };
-    setLocalFilters(updatedFilters);
+    }));
     setFilters(name, value);
+  };
+
+  const handleResetFilters = () => {
+    const resetFilters = {
+      timeFrame: "",
+      company: "",
+      location: "",
+      level: "",
+    };
+
+    setLocalFilters(resetFilters);
+    Object.entries(resetFilters).forEach(([name, value]) => {
+      setFilters(name, value);
+    });
   };
 
   return (
@@ -104,6 +116,13 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
             <option value="vp">VP</option>
           </select>
         </div>
+        <button
+          className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded"
+          type="button"
+          onClick={handleResetFilters}
+        >
+          Reset Filters
+        </button>
       </div>
     </div>
   );

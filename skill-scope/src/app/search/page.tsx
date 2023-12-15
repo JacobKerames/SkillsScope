@@ -1,6 +1,5 @@
 'use client'
 
-import React from 'react';
 import { metadata } from '../metadata';
 import SearchForm from '../components/SearchForm';
 import SearchResults from '../components/SearchResults';

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, FormEvent, useEffect } from "react";
+import { useState, FormEvent, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import SearchFilters from "./SearchFilters";
 
@@ -19,8 +19,23 @@ const SearchForm = () => {
     location: "",
     level: "",
   });
-  const updateFilters: (filters: Filters) => void = setFilters;
   const router = useRouter();
+
+  const buildQueryParams = useCallback(() => {
+    const queryParams = new URLSearchParams();
+
+    if (searchTerm.trim()) {
+      queryParams.append("title", encodeURIComponent(searchTerm));
+    }
+
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value.trim()) {
+        queryParams.append(key, value);
+      }
+    });
+
+    return queryParams;
+  }, [searchTerm, filters]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -40,44 +55,20 @@ const SearchForm = () => {
       typeof window !== "undefined" &&
       window.location.pathname === "/search"
     ) {
-      const queryParams = new URLSearchParams();
-
-      if (searchTerm.trim()) {
-        queryParams.append("title", encodeURIComponent(searchTerm));
-      }
-
-      for (const [key, value] of Object.entries(filters)) {
-        if (value && value.trim()) {
-          queryParams.append(key, value);
-        }
-      }
-
-      router.push(`/search?${queryParams.toString()}`);
+      const queryParams = buildQueryParams();
+      router.replace(`/search?${queryParams.toString()}`);
     }
-  }, [searchTerm, filters, router]);
+  }, [searchTerm, filters, router, buildQueryParams]);
 
   const handleSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    const queryParams = new URLSearchParams();
-
-    if (searchTerm.trim()) {
-      queryParams.append("title", encodeURIComponent(searchTerm));
-    }
-
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value && value.trim()) {
-        queryParams.append(key, value);
-      }
-    });
-
-    // Redirect to the search page with the query parameters
+    const queryParams = buildQueryParams();
     router.push(`/search?${queryParams.toString()}`);
   };
 
   const handleFilterChange = (name: string, value: string) => {
     const newFilters = { ...filters, [name]: value };
-    updateFilters(newFilters);
+    setFilters(newFilters);
   };
 
   return (

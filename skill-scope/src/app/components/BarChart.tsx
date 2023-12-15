@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { Skills } from "./SearchResults";
 import { Bar } from "react-chartjs-2";
 import "chart.js/auto";

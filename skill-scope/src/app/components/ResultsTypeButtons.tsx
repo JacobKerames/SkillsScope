@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 
 const ResultsTypeButtons = () => {
   const [activeTab, setActiveTab] = useState("skills");
