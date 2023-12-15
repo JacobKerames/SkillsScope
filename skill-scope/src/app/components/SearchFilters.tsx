@@ -14,18 +14,24 @@ type SearchFiltersProps = {
   currentFilters: Filters;
 };
 
-const SearchFilters: React.FC<SearchFiltersProps> = ({ setFilters, currentFilters }) => {
-  const [localFilters, setLocalFilters] = React.useState<Filters>(currentFilters);
+const SearchFilters: React.FC<SearchFiltersProps> = ({
+  setFilters,
+  currentFilters,
+}) => {
+  const [localFilters, setLocalFilters] =
+    React.useState<Filters>(currentFilters);
 
   useEffect(() => {
     setLocalFilters(currentFilters);
   }, [currentFilters]);
 
-  const handleChange = (event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
+  const handleChange = (
+    event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
+  ) => {
     const { name, value } = event.target;
     const updatedFilters = {
       ...localFilters,
-      [name]: value
+      [name]: value,
     };
     setLocalFilters(updatedFilters);
     setFilters(name, value);
@@ -44,9 +50,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setFilters, currentFilter
             onChange={handleChange}
           >
             {/* ... Time Frame select input ... */}
-            <option value="" disabled>
-              Time Frame
-            </option>
+            <option value="">Time Frame</option>
             <option value="pastMonth">Past Month</option>
             <option value="pastYear">Past Year</option>
             <option value="pastTwoYears">Past 2 Years</option>
@@ -87,9 +91,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ setFilters, currentFilter
             onChange={handleChange}
           >
             {/* ... Level select input ... */}
-            <option value="" disabled>
-              Experience Level
-            </option>
+            <option value="">Experience Level</option>
             <option value="entry">Entry</option>
             <option value="junior">Junior</option>
             <option value="mid">Mid</option>
