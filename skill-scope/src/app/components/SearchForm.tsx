@@ -1,89 +1,38 @@
-"use client";
+'use client'
 
-import { useState, FormEvent, useEffect, useCallback } from "react";
+import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import SearchFilters from "./SearchFilters";
 
-export type Filters = {
-  timeFrame: string;
-  company: string;
-  location: string;
-  level: string;
+type SearchFormProps = {
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
 };
 
-const SearchForm = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+const SearchForm: React.FC<SearchFormProps> = ({ searchTerm, setSearchTerm }) => {
   const [errorMessage, setErrorMessage] = useState("");
-  const [filters, setFilters] = useState<Filters>({
-    timeFrame: "",
-    company: "",
-    location: "",
-    level: "",
-  });
   const router = useRouter();
 
-  const buildQueryParams = useCallback(() => {
-    const queryParams = new URLSearchParams();
-
-    if (searchTerm.trim()) {
-      queryParams.append("title", encodeURIComponent(searchTerm.trim()));
-    }
-
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value.trim()) {
-        queryParams.append(key, value);
-      }
-    });
-
-    return queryParams;
-  }, [searchTerm, filters]);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const searchParams = new URLSearchParams(window.location.search);
-      setSearchTerm(decodeURIComponent(searchParams.get("title") || ""));
-      setFilters({
-        timeFrame: searchParams.get("timeFrame") || "",
-        company: searchParams.get("company") || "",
-        location: searchParams.get("location") || "",
-        level: searchParams.get("level") || "",
-      });
-    }
-  }, []);
-
-  useEffect(() => {
-    if (
-      typeof window !== "undefined" &&
-      window.location.pathname === "/search"
-    ) {
-      const queryParams = buildQueryParams();
-      router.push(`/search?${queryParams.toString()}`);
-    }
-  }, [searchTerm, filters, router, buildQueryParams]);
+  const isValidSearchTerm = (term: string) => !term.includes("%");
 
   const handleSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (searchTerm.includes("%")) {
+    if (!isValidSearchTerm(searchTerm)) {
       setErrorMessage("The search term cannot contain the '%' symbol.");
       return;
     }
     setErrorMessage("");
-    const queryParams = buildQueryParams();
+
+    const queryParams = new URLSearchParams();
+    queryParams.append("title", searchTerm.trim());
     router.push(`/search?${queryParams.toString()}`);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value.includes("%")) {
-      setErrorMessage("The search term cannot contain the '%' symbol.");
-    } else {
-      setErrorMessage("");
-    }
-    setSearchTerm(e.target.value);
-  };
-
-  const handleFilterChange = (name: string, value: string) => {
-    const newFilters = { ...filters, [name]: value };
-    setFilters(newFilters);
+    const newTerm = e.target.value;
+    setSearchTerm(newTerm);
+    setErrorMessage(
+      isValidSearchTerm(newTerm) ? "" : "The search term cannot contain the '%' symbol."
+    );
   };
 
   return (
@@ -105,9 +54,12 @@ const SearchForm = () => {
             Search
           </button>
         </div>
-        {errorMessage && <div className="text-red-500">{errorMessage}</div>}
+        {errorMessage && (
+          <div className="text-red-500" aria-live="assertive">
+            {errorMessage}
+          </div>
+        )}
       </form>
-      <SearchFilters setFilters={handleFilterChange} currentFilters={filters} />
     </>
   );
 };

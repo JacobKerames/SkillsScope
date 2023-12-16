@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -17,15 +17,19 @@ const getFirstParamValue = (
 
 const SearchResults = () => {
   const [skills, setSkills] = useState<Skills[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const searchParams = useSearchParams();
 
-  const title = decodeURIComponent(getFirstParamValue(searchParams.get("title"), "your search"));
+  const title = getFirstParamValue(searchParams.get("title"), "your search");
   const timeFrame = getFirstParamValue(searchParams.get("timeFrame"));
   const company = getFirstParamValue(searchParams.get("company"));
   const location = getFirstParamValue(searchParams.get("location"));
   const level = getFirstParamValue(searchParams.get("level"));
 
   useEffect(() => {
+    setIsLoading(true);
+    setError(null);
     const controller = new AbortController();
 
     const queryParams = new URLSearchParams({
@@ -38,9 +42,12 @@ const SearchResults = () => {
       queryParams.append("keyword", title);
     }
 
-    const hasValidParams = Array.from(queryParams.entries()).some(([key, value]) => key === "keyword" || value.trim() !== '');
+    const hasValidParams = Array.from(queryParams.entries()).some(
+      ([key, value]) => key === "keyword" || value.trim() !== ""
+    );
     if (!hasValidParams) {
       setSkills([]);
+      setIsLoading(false);
       return;
     }
 
@@ -54,13 +61,12 @@ const SearchResults = () => {
         const data = await response.json();
         setSkills(data);
       } catch (error) {
-        if (error instanceof Error) {
-          if (error.name !== "AbortError") {
-            console.error("Error fetching search results:", error);
-          }
-        } else {
-          console.error("An unexpected error occurred:", error);
+        if (error instanceof Error && error.name !== "AbortError") {
+          console.error("Error fetching search results:", error);
+          setError("Failed to fetch search results. Please try again.");
         }
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -69,6 +75,14 @@ const SearchResults = () => {
   }, [title, timeFrame, company, location, level]);
 
   const renderSkillsContent = () => {
+    if (isLoading) {
+      return <p>Loading...</p>;
+    }
+
+    if (error) {
+      return <p className="text-red-500">{error}</p>;
+    }
+
     if (skills.length > 0) {
       return (
         <div
@@ -86,9 +100,7 @@ const SearchResults = () => {
 
     return (
       <div className="container mb-20 mx-auto flex flex-col justify-center items-center px-6">
-        <p className="text-xl">
-          No skills found for {title || "your search"}.
-        </p>
+        <p className="text-xl">No skills found for {title || "your search"}.</p>
       </div>
     );
   };
