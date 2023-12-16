@@ -76,11 +76,19 @@ const SearchResults = () => {
 
   const renderSkillsContent = () => {
     if (isLoading) {
-      return <p>Loading...</p>;
+      return (
+        <div className="container mb-20 mx-auto flex flex-col justify-center items-center px-6">
+          <p className="text-xl">Loading...</p>
+        </div>
+      );
     }
 
     if (error) {
-      return <p className="text-red-500">{error}</p>;
+      return (
+        <div className="container mb-20 mx-auto flex flex-col justify-center items-center px-6">
+          <p className="text-xl text-red-500">{error}</p>
+        </div>
+      );
     }
 
     if (skills.length > 0) {

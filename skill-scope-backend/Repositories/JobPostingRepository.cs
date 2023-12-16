@@ -45,7 +45,9 @@ namespace skill_scope_backend.Repositories
                 sql += " AND jp.level = @Level";
             }
 
-            sql += " GROUP BY s.skill_name;";
+            sql += @"
+                GROUP BY s.skill_name
+                ORDER BY Percentage DESC;";
 
             using IDbConnection db = new NpgsqlConnection(_connectionString);
             var skillStats = await db.QueryAsync<SkillDTO>(sql, new 
