@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import React, { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Skills } from "./SearchResults";
 import * as d3 from "d3";
 
@@ -9,12 +9,33 @@ type BarChartProps = {
 };
 
 const BarChart = ({ skills }: BarChartProps) => {
-  const d3Container = useRef(null);
+  const d3Container = useRef<SVGSVGElement>(null);
+  const [containerWidth, setContainerWidth] = useState(0);
   const barPadding = 1.5;
   const barHeight = 30;
   const chartHeight =
     (skills.length * barHeight) + (skills.length * barPadding * barHeight);
-  const chartWidth = 800;
+
+  useEffect(() => {
+    // Set initial container width
+    if (d3Container.current) {
+      setContainerWidth(d3Container.current.clientWidth);
+    }
+
+    // Add resize listener to update width
+    const handleResize = () => {
+      if (d3Container.current) {
+        setContainerWidth(d3Container.current.clientWidth);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    // Clean up
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     if (skills && d3Container.current) {
@@ -28,7 +49,7 @@ const BarChart = ({ skills }: BarChartProps) => {
       const xScale = d3
         .scaleLinear()
         .domain([0, maxPercentage ?? 0])
-        .range([0, chartWidth]);
+        .range([0, containerWidth]);
 
       const yScale = d3
         .scaleBand()
@@ -50,8 +71,6 @@ const BarChart = ({ skills }: BarChartProps) => {
         .attr("fill", "#991B1B")
         .attr("rx", 4) // Set the x-axis radius for rounded corners
         .attr("ry", 4) // Set the y-axis radius for rounded corners
-        .attr("stroke", "#323232") // Border color
-        .attr("stroke-width", 2); // Border width
 
       // Add skill names above each bar
       svg
@@ -84,9 +103,11 @@ const BarChart = ({ skills }: BarChartProps) => {
       // Add y-axis
       svg.append("g").call(d3.axisLeft(yScale));
     }
-  }, [chartHeight, skills]);
+  }, [chartHeight, containerWidth, skills]);
 
-  return <svg ref={d3Container} width={chartWidth} height={chartHeight} />;
+  return (
+    <svg ref={d3Container} width="100%" height={chartHeight} />
+  );
 };
 
 export default BarChart;
