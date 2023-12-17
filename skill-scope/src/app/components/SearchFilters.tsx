@@ -19,6 +19,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
   currentFilters,
 }) => {
   const [localFilters, setLocalFilters] = useState<Filters>(currentFilters);
+  const isAnyFilterSet = Object.values(localFilters).some(value => value !== "");
 
   useEffect(() => {
     setLocalFilters(currentFilters);
@@ -115,13 +116,15 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
           </select>
         </div>
       </div>
-      <button
+      {isAnyFilterSet && (
+        <button
           className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded"
           type="button"
           onClick={handleResetFilters}
         >
           Reset Filters
         </button>
+      )}
     </div>
   );
 };
