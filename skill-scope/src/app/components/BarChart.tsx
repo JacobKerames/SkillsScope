@@ -103,7 +103,11 @@ const BarChart = ({ skills }: BarChartProps) => {
     }
   }, [chartHeight, containerWidth, skills]);
 
-  return <svg ref={d3Container} width="100%" height={chartHeight} />;
+  return (
+    <div className="my-6">
+      <svg ref={d3Container} width="100%" height={chartHeight} />
+    </div>
+  );
 };
 
 export default BarChart;

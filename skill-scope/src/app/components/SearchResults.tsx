@@ -76,11 +76,7 @@ const SearchResults = () => {
 
   const renderSkillsContent = () => {
     if (isLoading) {
-      return (
-        <div className="container mb-20 mx-auto flex flex-col justify-center items-center px-6">
-          <p className="text-xl">Loading...</p>
-        </div>
-      );
+      return null;
     }
 
     if (error) {
