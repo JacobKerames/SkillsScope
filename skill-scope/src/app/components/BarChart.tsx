@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { useRef, useEffect, useState } from "react";
 import { Skills } from "./SearchResults";
@@ -11,10 +11,10 @@ type BarChartProps = {
 const BarChart = ({ skills }: BarChartProps) => {
   const d3Container = useRef<SVGSVGElement>(null);
   const [containerWidth, setContainerWidth] = useState(0);
-  const barPadding = 1.5;
+  const barPadding = 1.1;
   const barHeight = 30;
   const chartHeight =
-    (skills.length * barHeight) + (skills.length * barPadding * barHeight);
+    skills.length * barHeight + skills.length * barPadding * barHeight;
 
   useEffect(() => {
     // Set initial container width
@@ -55,7 +55,8 @@ const BarChart = ({ skills }: BarChartProps) => {
         .scaleBand()
         .domain(skills.map((skill) => skill.skillName))
         .range([0, chartHeight])
-        .padding(barPadding);
+        .paddingInner(barPadding)
+        .paddingOuter(0.5);
 
       // Draw bars
       svg
@@ -70,7 +71,7 @@ const BarChart = ({ skills }: BarChartProps) => {
         .attr("width", (d) => xScale(d.percentage))
         .attr("fill", "#991B1B")
         .attr("rx", 4) // Set the x-axis radius for rounded corners
-        .attr("ry", 4) // Set the y-axis radius for rounded corners
+        .attr("ry", 4); // Set the y-axis radius for rounded corners
 
       // Add skill names above each bar
       svg
@@ -80,7 +81,7 @@ const BarChart = ({ skills }: BarChartProps) => {
         .append("text")
         .attr("class", "skill-label")
         .attr("y", (d) => (yScale(d.skillName) ?? 0) - 8)
-        .attr("x", 0)
+        .attr("x", 2)
         .attr("text-anchor", "start") // Aligns the text to the start of the bar
         .text((d) => d.skillName)
         .attr("fill", "#FFF")
@@ -99,15 +100,10 @@ const BarChart = ({ skills }: BarChartProps) => {
         .attr("text-anchor", "end") // Right-align the text with the end of the bar
         .attr("fill", "#FFF") // Set the text color to white for visibility
         .attr("font-size", "15px");
-
-      // Add y-axis
-      svg.append("g").call(d3.axisLeft(yScale));
     }
   }, [chartHeight, containerWidth, skills]);
 
-  return (
-    <svg ref={d3Container} width="100%" height={chartHeight} />
-  );
+  return <svg ref={d3Container} width="100%" height={chartHeight} />;
 };
 
 export default BarChart;

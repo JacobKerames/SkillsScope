@@ -49,7 +49,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
 
   return (
     <div className="bg-transparent p-6 rounded-lg shadow space-y-4">
-      <label className="block text-sm font-medium text-white">Filter by:</label>
+      <label className="block text-sm font-medium text-white">Filter by</label>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Time Frame Select */}
         <div className="flex items-center border-b border-teal-500 py-2">

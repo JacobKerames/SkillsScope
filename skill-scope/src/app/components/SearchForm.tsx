@@ -1,16 +1,26 @@
-'use client'
+"use client";
 
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import { FaCaretDown, FaCaretUp } from "react-icons/fa";
 
 type SearchFormProps = {
   searchTerm: string;
   setSearchTerm: (term: string) => void;
+  showFilters?: boolean;
+  toggleFilters?: () => void;
 };
 
-const SearchForm: React.FC<SearchFormProps> = ({ searchTerm, setSearchTerm }) => {
+const SearchForm: React.FC<SearchFormProps> = ({
+  searchTerm,
+  setSearchTerm,
+  showFilters,
+  toggleFilters,
+}) => {
   const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
+  const pathname = usePathname();
 
   const isValidSearchTerm = (term: string) => !term.includes("%");
 
@@ -31,14 +41,22 @@ const SearchForm: React.FC<SearchFormProps> = ({ searchTerm, setSearchTerm }) =>
     const newTerm = e.target.value;
     setSearchTerm(newTerm);
     setErrorMessage(
-      isValidSearchTerm(newTerm) ? "" : "The search term cannot contain the '%' symbol."
+      isValidSearchTerm(newTerm)
+        ? ""
+        : "The search term cannot contain the '%' symbol."
     );
+  };
+
+  const handleFilters = () => {
+    if (toggleFilters) {
+      toggleFilters();
+    }
   };
 
   return (
     <>
-      <form onSubmit={handleSearch} className="w-full max-w-md">
-        <div className="flex items-center border-b border-teal-500 py-2">
+      <form onSubmit={handleSearch} className="w-full max-w-lg">
+        <div className="flex items-center border-b border-teal-500 py-2 gap-4">
           <input
             className="appearance-none bg-transparent border-none w-full text-white mr-3 py-1 px-2 leading-tight focus:outline-none"
             type="text"
@@ -53,6 +71,24 @@ const SearchForm: React.FC<SearchFormProps> = ({ searchTerm, setSearchTerm }) =>
           >
             Search
           </button>
+          {pathname !== "/" && (
+            <button
+              className={`flex items-center justify-center text-sm py-1 px-2 rounded border-4 text-white ${
+                showFilters
+                  ? "bg-teal-700 border-teal-700 hover:bg-teal-500 hover:border-teal-500"
+                  : "bg-teal-500 border-teal-500 hover:bg-teal-700 hover:border-teal-700"
+              }`}
+              type="button"
+              onClick={handleFilters}
+            >
+              Filters
+              {showFilters ? (
+                <FaCaretUp className="ml-1" />
+              ) : (
+                <FaCaretDown className="ml-1" />
+              )}
+            </button>
+          )}
         </div>
         {errorMessage && (
           <div className="text-red-500" aria-live="assertive">

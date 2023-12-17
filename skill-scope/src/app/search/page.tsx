@@ -10,6 +10,7 @@ import { Filters } from "../components/SearchFilters";
 
 const SearchResultsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState<Filters>({
     timeFrame: "",
     company: "",
@@ -47,6 +48,10 @@ const SearchResultsPage = () => {
     router.replace(`/search?${queryParams.toString()}`);
   }, [searchTerm, filters, router]);
 
+  const toggleFilters = () => {
+    setShowFilters(prev => !prev);
+  };
+
   const handleFilterChange = (updatedFilters: Filters) => {
     setFilters(updatedFilters);
   };
@@ -56,11 +61,10 @@ const SearchResultsPage = () => {
       <div className="container mt-6 mx-auto flex flex-col justify-center items-center p-6">
         <h1 className="text-5xl text-center mb-4">{metadata.title}</h1>
         <p className="text-xl text-center mb-8">{metadata.description}</p>
-        <SearchForm searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-        <SearchFilters
-          currentFilters={filters}
-          setFilters={handleFilterChange}
-        />
+        <SearchForm searchTerm={searchTerm} setSearchTerm={setSearchTerm} showFilters={showFilters} toggleFilters={toggleFilters} />
+        {showFilters &&
+          <SearchFilters currentFilters={filters} setFilters={handleFilterChange} />
+        }
       </div>
       <SearchResults />
     </>
