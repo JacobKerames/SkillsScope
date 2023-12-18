@@ -3,6 +3,6 @@ public class Country
 {
     public int CountryId { get; set; }
     public required string CountryName { get; set; }
-    public string? CountryAlpha2Code { get; set; }
-    public string? CountryAlpha3Code { get; set; }
+    public string? Iso3 { get; set; }
+    public string? Iso2 { get; set; }
 }

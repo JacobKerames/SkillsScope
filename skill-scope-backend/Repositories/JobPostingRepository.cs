@@ -22,7 +22,9 @@ namespace skill_scope_backend.Repositories
             if (!string.IsNullOrEmpty(parameters.TimeFrame))
             {
                 TimeFrameConverter(parameters);
-                sql += " AND jp.posted_date >= @StartDate AND jp.posted_date <= @EndDate";
+                sql += @"
+                    AND jp.posted_date >= @StartDate
+                    AND jp.posted_date <= @EndDate";
             }
 
             if (!string.IsNullOrEmpty(parameters.Company))
@@ -37,7 +39,12 @@ namespace skill_scope_backend.Repositories
 
             if (!string.IsNullOrEmpty(parameters.Location))
             {
-                sql += " AND jp.city_id IN (SELECT city_id FROM cities WHERE name ILIKE @City)";
+                sql += @"
+                    AND jp.city_id
+                    IN (
+                        SELECT city_id FROM cities 
+                        WHERE name ILIKE @City
+                    )";
             }
 
             if (!string.IsNullOrEmpty(parameters.Level))
