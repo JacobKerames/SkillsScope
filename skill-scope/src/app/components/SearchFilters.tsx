@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import React, { useEffect, useState } from "react";
 import LocationFilter from "./LocationFilter";
@@ -20,7 +20,9 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
   currentFilters,
 }) => {
   const [localFilters, setLocalFilters] = useState<Filters>(currentFilters);
-  const isAnyFilterSet = Object.values(localFilters).some(value => value !== "");
+  const isAnyFilterSet = Object.values(localFilters).some(
+    (value) => value !== ""
+  );
 
   useEffect(() => {
     setLocalFilters(currentFilters);
@@ -50,9 +52,8 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
   };
 
   return (
-    <div className="bg-transparent p-6 rounded-lg shadow space-y-4">
-      <label className="block text-sm font-medium text-white">Filter by</label>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="bg-transparent border-b border-teal-900 p-6 rounded-lg shadow space-y-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {/* Time Frame Select */}
         <div className="flex items-center border-b border-teal-500 py-2">
           <select
@@ -111,13 +112,15 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
         </div>
       </div>
       {isAnyFilterSet && (
-        <button
-          className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded"
-          type="button"
-          onClick={handleResetFilters}
-        >
-          Reset Filters
-        </button>
+        <div className="flex justify-center pt-2">
+          <button
+            className="text-sm py-1 px-2 rounded border-4 text-white bg-teal-500 border-teal-500 hover:bg-teal-700 hover:border-teal-700"
+            type="button"
+            onClick={handleResetFilters}
+          >
+            Reset
+          </button>
+        </div>
       )}
     </div>
   );

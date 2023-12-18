@@ -81,7 +81,7 @@ const SearchForm: React.FC<SearchFormProps> = ({
               type="button"
               onClick={handleFilters}
             >
-              Filters
+              Filter
               {showFilters ? (
                 <FaCaretUp className="ml-1" />
               ) : (
