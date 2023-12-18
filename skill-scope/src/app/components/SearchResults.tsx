@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import BarChart from "./BarChart";
 import ResultsTypeButtons from "./ResultsTypeButtons";
 
-export type Skills = {
+export type Skill = {
   skillName: string;
   percentage: number;
 };
@@ -16,7 +16,7 @@ const getFirstParamValue = (
 ) => (Array.isArray(param) ? param[0] : param || defaultValue);
 
 const SearchResults = () => {
-  const [skills, setSkills] = useState<Skills[]>([]);
+  const [skills, setSkills] = useState<Skill[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const searchParams = useSearchParams();

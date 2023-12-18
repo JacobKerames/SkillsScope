@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from "react";
+import LocationFilter from "./LocationFilter";
 
 export type Filters = {
   timeFrame: string;
@@ -83,14 +84,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
 
         {/* Location Input */}
         <div className="flex items-center border-b border-teal-500 py-2">
-          <input
-            className="appearance-none bg-transparent border-none w-full text-white mr-3 py-1 px-2 leading-tight focus:outline-none"
-            type="text"
-            placeholder="City, state, or country"
-            name="location"
-            value={localFilters.location}
-            onChange={handleChange}
-          />
+          <LocationFilter />
         </div>
 
         {/* Level Select */}
