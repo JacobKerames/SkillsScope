@@ -1,11 +1,11 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { Skills } from "./SearchResults";
+import { Skill } from "./SearchResults";
 import * as d3 from "d3";
 
 type BarChartProps = {
-  skills: Skills[];
+  skills: Skill[];
 };
 
 const BarChart = ({ skills }: BarChartProps) => {

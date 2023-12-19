@@ -13,9 +13,10 @@ namespace skill_scope_backend.Repositories
 		{
 			var sql = @"
 				SELECT c.city_id, c.city_name, s.state_id, s.state_name, co.country_id, co.country_name
-				FROM cities c
-				JOIN states s ON c.state_id = s.state_id
-				JOIN countries co ON s.country_id = co.country_id;";
+        FROM cities c
+        JOIN states s ON c.state_id = s.state_id
+        JOIN countries co ON s.country_id = co.country_id
+        ORDER BY (CASE WHEN co.country_name = 'United States' THEN 1 ELSE 2 END), co.country_name, s.state_name, c.city_name;";
 
 			using IDbConnection db = new NpgsqlConnection(_connectionString);
 			var locationData = await db.QueryAsync(sql);
