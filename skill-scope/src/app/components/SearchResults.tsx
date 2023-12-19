@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import BarChart from "./BarChart";
 import ResultsTypeButtons from "./ResultsTypeButtons";
-import CircularProgress from '@mui/material/CircularProgress';
+import CircularProgress from "@mui/material/CircularProgress";
 
 export type Skill = {
   skillName: string;
@@ -21,7 +21,7 @@ const SearchResults = () => {
   const [error, setError] = useState<string | null>(null);
   const searchParams = useSearchParams();
 
-  const title = getFirstParamValue(searchParams.get("title"), "your search");
+  const title = getFirstParamValue(searchParams.get("title"));
   const timeFrame = getFirstParamValue(searchParams.get("timeFrame"));
   const company = getFirstParamValue(searchParams.get("company"));
   const cityId = getFirstParamValue(searchParams.get("cityId"));
@@ -42,7 +42,7 @@ const SearchResults = () => {
       countryId,
       level,
     });
-    if (title !== "your search") {
+    if (title) {
       queryParams.append("keyword", title);
     }
 
@@ -75,6 +75,51 @@ const SearchResults = () => {
     return () => controller.abort();
   }, [title, timeFrame, company, cityId, stateId, countryId, level]);
 
+  const generateResultsLabel = () => {
+    let label = "";
+    const filters = [];
+
+    if (level) {
+      filters.push(`${level} level`);
+    }
+    if (company) {
+      filters.push(
+        `at ${company
+          .split(" ")
+          .filter((word) => word)
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ")}`
+      );
+    }
+    if (cityId || stateId || countryId) {
+      filters.push(`in selected location `);
+    }
+    if (timeFrame) {
+      filters.push(`in the ${timeFrameToLabel(timeFrame)}`);
+    }
+
+    if (filters.length > 0) {
+      label += filters.join("\n");
+    }
+
+    return label.charAt(0).toUpperCase() + label.slice(1);
+  };
+
+  const timeFrameToLabel = (timeFrame: string) => {
+    switch (timeFrame) {
+      case "pastMonth":
+        return "past month";
+      case "pastYear":
+        return "past year";
+      case "pastTwoYears":
+        return "past two years";
+      case "pastFiveYears":
+        return "past five years";
+      default:
+        return "";
+    }
+  };
+
   const renderSkillsContent = () => {
     if (skills === null) {
       return (
@@ -95,7 +140,18 @@ const SearchResults = () => {
     if (skills.length === 0) {
       return (
         <div className="container mb-20 mx-auto flex flex-col justify-center items-center px-6">
-          <p className="text-xl">No skills found for {title || "your search"}.</p>
+          <p className="text-xl">
+            No skills found for{" "}
+            {title &&
+              title
+                .split(" ")
+                .filter((word) => word)
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(" ")}
+          </p>
+          <p className="text-lg text-left text-gray-500">
+            {generateResultsLabel()}
+          </p>
         </div>
       );
     }
@@ -107,7 +163,17 @@ const SearchResults = () => {
       >
         <ResultsTypeButtons />
         <p className="text-xl text-left">
-          Top skills for {title || "your search"} jobs
+          Top skills for{" "}
+          {title &&
+            title
+              .split(" ")
+              .filter((word) => word)
+              .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(" ")}{" "}
+          jobs
+        </p>
+        <p className="text-lg text-left text-gray-500">
+          {generateResultsLabel()}
         </p>
         <BarChart skills={skills} />
       </div>

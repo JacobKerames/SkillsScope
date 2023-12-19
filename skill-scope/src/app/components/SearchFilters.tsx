@@ -82,7 +82,8 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
             onChange={handleChange}
           >
             {/* ... Time Frame select input ... */}
-            <option value="">Time Frame</option>
+            <option disabled>Time Frame</option>
+            <option value="">Any</option>
             <option value="pastMonth">Past Month</option>
             <option value="pastYear">Past Year</option>
             <option value="pastTwoYears">Past 2 Years</option>
