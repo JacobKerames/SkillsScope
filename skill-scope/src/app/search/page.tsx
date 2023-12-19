@@ -13,7 +13,7 @@ const SearchResultsPage = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState<Filters>({
     timeFrame: "",
-    company: "",
+    companyId: null,
     cityId: null,
     stateId: null,
     countryId: null,
@@ -28,7 +28,10 @@ const SearchResultsPage = () => {
     );
     const initialFilters = {
       timeFrame: searchParams.get("timeFrame") || "",
-      company: searchParams.get("company") || "",
+      companyId:
+        searchParams.get("companyId") !== null
+          ? parseInt(searchParams.get("companyId") as string)
+          : null,
       cityId:
         searchParams.get("cityId") !== null
           ? parseInt(searchParams.get("cityId") as string)

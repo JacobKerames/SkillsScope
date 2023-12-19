@@ -29,14 +29,9 @@ namespace skill_scope_backend.Repositories
           AND jp.posted_date <= @EndDate";
       }
 
-      if (!string.IsNullOrEmpty(parameters.Company))
+      if (parameters.CompanyId.HasValue)
       {
-        sql += @"
-          AND jp.company_id
-          IN (
-            SELECT company_id FROM companies c
-            WHERE to_tsvector('english', c.company_name) @@ plainto_tsquery('english', @Company)
-          )";
+        sql += " AND jp.company_id = @CompanyId";
       }
 
       if (parameters.CityId.HasValue)
@@ -69,7 +64,7 @@ namespace skill_scope_backend.Repositories
         parameters.Keyword,
         parameters.StartDate,
         parameters.EndDate,
-        Company = $"%{parameters.Company}%",
+        parameters.CompanyId,
         parameters.CityId,
         parameters.StateId,
         parameters.CountryId,

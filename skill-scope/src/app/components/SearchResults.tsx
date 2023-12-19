@@ -23,7 +23,7 @@ const SearchResults = () => {
 
   const title = getFirstParamValue(searchParams.get("title"));
   const timeFrame = getFirstParamValue(searchParams.get("timeFrame"));
-  const company = getFirstParamValue(searchParams.get("company"));
+  const companyId = getFirstParamValue(searchParams.get("companyId"));
   const cityId = getFirstParamValue(searchParams.get("cityId"));
   const stateId = getFirstParamValue(searchParams.get("stateId"));
   const countryId = getFirstParamValue(searchParams.get("countryId"));
@@ -36,7 +36,7 @@ const SearchResults = () => {
 
     const queryParams = new URLSearchParams({
       timeFrame,
-      company,
+      companyId,
       cityId,
       stateId,
       countryId,
@@ -73,7 +73,7 @@ const SearchResults = () => {
 
     fetchData();
     return () => controller.abort();
-  }, [title, timeFrame, company, cityId, stateId, countryId, level]);
+  }, [title, timeFrame, companyId, cityId, stateId, countryId, level]);
 
   const generateResultsLabel = () => {
     let label = "";
@@ -82,14 +82,8 @@ const SearchResults = () => {
     if (level) {
       filters.push(`${level} level`);
     }
-    if (company) {
-      filters.push(
-        `at ${company
-          .split(" ")
-          .filter((word) => word)
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(" ")}`
-      );
+    if (companyId) {
+      filters.push();
     }
     if (cityId || stateId || countryId) {
       filters.push(`in selected location `);

@@ -5,7 +5,7 @@ public class SkillSearchDTO
     public string? TimeFrame { get; set; }
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
-    public string? Company { get; set; }
+    public int? CompanyId { get; set; }
     public int? CityId { get; set; }
     public int? StateId { get; set; }
     public int? CountryId { get; set; }
