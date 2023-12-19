@@ -7,7 +7,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 const menuProps: Partial<MenuProps> = {
   PaperProps: {
     sx: {
-			color: 'white',
+			color: '#E6E6E6',
       bgcolor: '#101010',
 			border: '1px solid gray',
 			maxHeight: '350px',
@@ -77,7 +77,7 @@ const ExperienceLevelFilter: React.FC<ExperienceLevelFilterProps> = ({ onLevelCh
 					}}
 					MenuProps={menuProps}
 					sx={{ 
-						color: 'white',
+						color: '#E6E6E6',
 						'& .MuiSelect-select': {
 							padding: '4px 8px',
 						}

@@ -164,7 +164,7 @@ const LocationFilter: React.FC<LocationFilterProps> = ({
                 },
                 "& .MuiAutocomplete-input": {
                   padding: "4px 8px",
-                  color: "white",
+                  color: "#E6E6E6",
                   "&::placeholder": {
                     color: "#9CA3AF",
                     opacity: 1,
@@ -172,7 +172,7 @@ const LocationFilter: React.FC<LocationFilterProps> = ({
                 },
               },
               "& .MuiAutocomplete-clearIndicator": {
-                color: "white",
+                color: "#E6E6E6",
               },
             }}
             inputProps={{
@@ -184,6 +184,7 @@ const LocationFilter: React.FC<LocationFilterProps> = ({
         ListboxProps={{
           sx: {
             maxHeight: 350,
+            padding: '5px',
             "& .MuiAutocomplete-option": {
               "&:hover": {
                 backgroundColor: "#212121",
@@ -199,7 +200,7 @@ const LocationFilter: React.FC<LocationFilterProps> = ({
             {...props}
             style={{
               backgroundColor: "#101010",
-              color: "white",
+              color: "#E6E6E6",
               border: "1px solid gray",
             }}
           />
