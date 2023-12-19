@@ -28,6 +28,7 @@ const SearchResults = () => {
   const stateId = getFirstParamValue(searchParams.get("stateId"));
   const countryId = getFirstParamValue(searchParams.get("countryId"));
   const level = getFirstParamValue(searchParams.get("level"));
+  console.log(level);
 
   useEffect(() => {
     setIsLoading(true);
@@ -41,7 +42,7 @@ const SearchResults = () => {
       stateId,
       countryId,
       level,
-    });    
+    });
     if (title !== "your search") {
       queryParams.append("keyword", title);
     }

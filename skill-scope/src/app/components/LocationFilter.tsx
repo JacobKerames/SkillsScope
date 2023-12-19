@@ -62,7 +62,6 @@ const LocationFilter: React.FC<LocationFilterProps> = ({
           throw new Error("Failed to fetch locations");
         }
         const data: Location[] = await response.json();
-        console.log(data);
         setLocations(data);
       } catch (error) {
         console.error("Error fetching locations:", error);
