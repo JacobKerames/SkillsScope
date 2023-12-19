@@ -139,7 +139,7 @@ const CompanyFilter: React.FC<CompanyFilterProps> = ({
           },
         }}
         PopperComponent={(props) => (
-          <Popper {...props} style={{ width: "300px" }} />
+          <Popper {...props}/>
         )}
         PaperComponent={(props) => (
           <Paper

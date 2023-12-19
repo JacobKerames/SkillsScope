@@ -12,7 +12,7 @@ const ResultsTypeButtons = () => {
   ];
 
   return (
-		<div className="grid grid-cols-3 my-12">
+		<div className="grid grid-cols-3 mb-12">
 			{tabs.map((tab) => (
 				<button
 					key={tab.value}
