@@ -10,6 +10,7 @@ const menuProps: Partial<MenuProps> = {
 			color: 'white',
       bgcolor: '#101010',
 			border: '1px solid gray',
+			maxHeight: '350px',
       '& .MuiMenuItem-root': {
         '&:hover': {
           backgroundColor: '#212121',
@@ -47,7 +48,7 @@ const ExperienceLevelFilter: React.FC<ExperienceLevelFilterProps> = ({ onLevelCh
 					displayEmpty
 					renderValue={(selected) => {
 						if (selected === '') {
-							return <span style={{ color: 'gray', fontStyle: 'normal' }}>Experience Level</span>;
+							return <span style={{ color: '#9CA3AF', fontStyle: 'normal' }}>Experience Level</span>;
 						}
 						switch (selected) {
 							case 'entry':

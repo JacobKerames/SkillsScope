@@ -1,7 +1,23 @@
 import { useState } from "react";
+import { MenuProps } from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+
+const menuProps: Partial<MenuProps> = {
+  PaperProps: {
+    sx: {
+			color: 'white',
+      bgcolor: '#101010',
+			border: '1px solid gray',
+      '& .MuiMenuItem-root': {
+        '&:hover': {
+          backgroundColor: '#212121',
+        },
+      },
+    },
+  },
+};
 
 interface TimeFrameFilterProps {
   onTimeFrameChange: (value: string) => void;
@@ -31,7 +47,7 @@ const TimeFrameFilter: React.FC<TimeFrameFilterProps> = ({ onTimeFrameChange }) 
 					displayEmpty
 					renderValue={(selected) => {
 						if (selected === '') {
-							return <span style={{ color: 'gray', fontStyle: 'normal' }}>Time Frame</span>;
+							return <span style={{ color: '#9CA3AF', fontStyle: 'normal' }}>Time Frame</span>;
 						}
 						switch (selected) {
 							case 'pastMonth':
@@ -46,6 +62,7 @@ const TimeFrameFilter: React.FC<TimeFrameFilterProps> = ({ onTimeFrameChange }) 
 								return selected;
 						}
 					}}
+					MenuProps={menuProps}
 					sx={{ 
 						color: 'white',
 						'& .MuiSelect-select': {
