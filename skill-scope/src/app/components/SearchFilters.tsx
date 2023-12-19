@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import LocationFilter from "./LocationFilter";
 import TimeFrameFilter from "./TimeFrameFilter";
+import ExperienceLevelFilter from "./ExperienceLevelFilter";
 
 export interface Filters {
   timeFrame: string;
@@ -64,6 +65,12 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
     setFilters(updatedFilters);
   };
 
+  const handleLevelChange = (newLevel: string) => {
+    const updatedFilters = { ...localFilters, level: newLevel };
+    setLocalFilters(updatedFilters);
+    setFilters(updatedFilters);
+  };
+
   const handleResetFilters = () => {
     const resetFilters: Filters = {
       timeFrame: "",
@@ -104,27 +111,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
         />
 
         {/* Level Select */}
-        <div className="flex items-center border-b border-teal-500 py-2">
-          <select
-            className="appearance-none bg-transparent border-none w-full text-white mr-3 py-1 px-2 leading-tight focus:outline-none"
-            name="level"
-            value={localFilters.level}
-            onChange={handleChange}
-          >
-            {/* ... Level select input ... */}
-            <option value="">Experience Level</option>
-            <option value="entry">Entry</option>
-            <option value="junior">Junior</option>
-            <option value="mid">Mid</option>
-            <option value="senior">Senior</option>
-            <option value="lead">Lead</option>
-            <option value="principal">Principal</option>
-            <option value="staff">Staff</option>
-            <option value="manager">Manager</option>
-            <option value="director">Director</option>
-            <option value="vp">VP</option>
-          </select>
-        </div>
+        <ExperienceLevelFilter onLevelChange={handleLevelChange} />
       </div>
       {isAnyFilterSet && (
         <div className="flex justify-center pt-2">
