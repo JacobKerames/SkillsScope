@@ -1,7 +1,23 @@
 import { useState } from "react";
+import { MenuProps } from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+
+const menuProps: Partial<MenuProps> = {
+  PaperProps: {
+    sx: {
+			color: 'white',
+      bgcolor: '#101010',
+			border: '1px solid gray',
+      '& .MuiMenuItem-root': {
+        '&:hover': {
+          backgroundColor: '#212121',
+        },
+      },
+    },
+  },
+};
 
 interface ExperienceLevelFilterProps {
   onLevelChange: (value: string) => void;
@@ -58,6 +74,7 @@ const ExperienceLevelFilter: React.FC<ExperienceLevelFilterProps> = ({ onLevelCh
 								return selected;
 						}
 					}}
+					MenuProps={menuProps}
 					sx={{ 
 						color: 'white',
 						'& .MuiSelect-select': {
