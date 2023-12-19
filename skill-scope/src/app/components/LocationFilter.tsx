@@ -126,7 +126,7 @@ const LocationFilter: React.FC<LocationFilterProps> = ({
         sx={{
           width: "100%",
           "& .MuiInputBase-root": {
-            padding: "0", // Remove padding
+            padding: "0",
           },
         }}
         value={selectedLocation}
@@ -153,13 +153,13 @@ const LocationFilter: React.FC<LocationFilterProps> = ({
               "& .MuiOutlinedInput-root": {
                 padding: "0",
                 "& fieldset": {
-                  borderColor: "transparent", // Remove the border color
+                  borderColor: "transparent",
                 },
                 "&:hover fieldset": {
-                  borderColor: "transparent", // Remove the hover border color
+                  borderColor: "transparent",
                 },
                 "&.Mui-focused fieldset": {
-                  borderColor: "transparent", // Remove the focus border color
+                  borderColor: "transparent",
                 },
                 "& .MuiAutocomplete-input": {
                   padding: "4px 8px",

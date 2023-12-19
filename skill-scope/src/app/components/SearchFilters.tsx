@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import LocationFilter from "./LocationFilter";
+import TimeFrameFilter from "./TimeFrameFilter";
 
 export interface Filters {
   timeFrame: string;
@@ -42,6 +43,12 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
     setFilters(updatedFilters);
   };
 
+  const handleTimeFrameChange = (newTimeFrame: string) => {
+    const updatedFilters = { ...localFilters, timeFrame: newTimeFrame };
+    setLocalFilters(updatedFilters);
+    setFilters(updatedFilters);
+  };
+
   const handleLocationChange = (
     cityId: number | null,
     stateId: number | null,
@@ -74,22 +81,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
     <div className="bg-transparent border-b border-teal-900 p-6 rounded-lg shadow space-y-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {/* Time Frame Select */}
-        <div className="flex items-center border-b border-teal-500 py-2">
-          <select
-            className="appearance-none bg-transparent border-none w-full text-white mr-3 py-1 px-2 leading-tight focus:outline-none"
-            name="timeFrame"
-            value={localFilters.timeFrame}
-            onChange={handleChange}
-          >
-            {/* ... Time Frame select input ... */}
-            <option disabled>Time Frame</option>
-            <option value="">Any</option>
-            <option value="pastMonth">Past Month</option>
-            <option value="pastYear">Past Year</option>
-            <option value="pastTwoYears">Past 2 Years</option>
-            <option value="pastFiveYears">Past 5 Years</option>
-          </select>
-        </div>
+        <TimeFrameFilter onTimeFrameChange={handleTimeFrameChange} />
 
         {/* Company Input */}
         <div className="flex items-center border-b border-teal-500 py-2">
