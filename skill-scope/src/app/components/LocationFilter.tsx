@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
+import { MenuProps } from "@mui/material/Menu";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
-import { FilterOptionsState } from "@mui/material";
+import { FilterOptionsState, Paper, Popper } from "@mui/material";
 
 interface City {
   cityId: number;
@@ -163,6 +164,11 @@ const LocationFilter: React.FC<LocationFilterProps> = ({
                 },
                 "& .MuiAutocomplete-input": {
                   padding: "4px 8px",
+                  color: "white",
+                  "&::placeholder": {
+                    color: "#9CA3AF",
+                    opacity: 1,
+                  },
                 },
               },
               "& .MuiAutocomplete-clearIndicator": {
@@ -172,7 +178,29 @@ const LocationFilter: React.FC<LocationFilterProps> = ({
             inputProps={{
               ...params.inputProps,
               autoComplete: "new-password",
-              style: { color: "white" },
+            }}
+          />
+        )}
+        ListboxProps={{
+          sx: {
+            maxHeight: 350,
+            "& .MuiAutocomplete-option": {
+              "&:hover": {
+                backgroundColor: "#212121",
+              },
+            },
+          },
+        }}
+        PopperComponent={(props) => (
+          <Popper {...props} style={{ width: "300px" }} />
+        )}
+        PaperComponent={(props) => (
+          <Paper
+            {...props}
+            style={{
+              backgroundColor: "#101010",
+              color: "white",
+              border: "1px solid gray",
             }}
           />
         )}
