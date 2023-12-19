@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -24,7 +24,9 @@ const SearchResults = () => {
   const title = getFirstParamValue(searchParams.get("title"), "your search");
   const timeFrame = getFirstParamValue(searchParams.get("timeFrame"));
   const company = getFirstParamValue(searchParams.get("company"));
-  const location = getFirstParamValue(searchParams.get("location"));
+  const cityId = getFirstParamValue(searchParams.get("cityId"));
+  const stateId = getFirstParamValue(searchParams.get("stateId"));
+  const countryId = getFirstParamValue(searchParams.get("countryId"));
   const level = getFirstParamValue(searchParams.get("level"));
 
   useEffect(() => {
@@ -35,9 +37,11 @@ const SearchResults = () => {
     const queryParams = new URLSearchParams({
       timeFrame,
       company,
-      location,
+      cityId,
+      stateId,
+      countryId,
       level,
-    });
+    });    
     if (title !== "your search") {
       queryParams.append("keyword", title);
     }
@@ -72,7 +76,7 @@ const SearchResults = () => {
 
     fetchData();
     return () => controller.abort();
-  }, [title, timeFrame, company, location, level]);
+  }, [title, timeFrame, company, cityId, stateId, countryId, level]);
 
   const renderSkillsContent = () => {
     if (isLoading) {

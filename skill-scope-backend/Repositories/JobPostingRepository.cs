@@ -37,14 +37,19 @@ namespace skill_scope_backend.Repositories
           )";
       }
 
-      if (!string.IsNullOrEmpty(parameters.Location))
+      if (parameters.CityId.HasValue)
       {
-        sql += @"
-          AND jp.city_id
-          IN (
-            SELECT city_id FROM cities 
-            WHERE name ILIKE @City
-          )";
+        sql += " AND jp.city_id = @CityId";
+      }
+
+      if (parameters.StateId.HasValue)
+      {
+        sql += " AND jp.state_id = @StateId";
+      }
+
+      if (parameters.CountryId.HasValue)
+      {
+        sql += " AND jp.country_id = @CountryId";
       }
 
       if (!string.IsNullOrEmpty(parameters.Level))
@@ -63,7 +68,9 @@ namespace skill_scope_backend.Repositories
         parameters.StartDate,
         parameters.EndDate,
         Company = $"%{parameters.Company}%",
-        Location = $"%{parameters.Location}%",
+        parameters.CityId,
+        parameters.StateId,
+        parameters.CountryId,
         parameters.Level
       });
 
