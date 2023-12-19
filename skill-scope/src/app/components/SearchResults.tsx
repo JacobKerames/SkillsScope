@@ -1,134 +1,114 @@
 'use client'
 
-import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { Bar } from 'react-chartjs-2';
-import 'chart.js/auto';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import BarChart from "./BarChart";
+import ResultsTypeButtons from "./ResultsTypeButtons";
 
-
-type Skills = {
+export type Skill = {
   skillName: string;
   percentage: number;
 };
 
+const getFirstParamValue = (
+  param: string | string[] | null,
+  defaultValue = ""
+) => (Array.isArray(param) ? param[0] : param || defaultValue);
+
 const SearchResults = () => {
-  const [skills, setSkills] = useState<Skills[]>([]);
+  const [skills, setSkills] = useState<Skill[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const searchParams = useSearchParams();
-  const keyword = searchParams.get('title');
+
+  const title = getFirstParamValue(searchParams.get("title"), "your search");
+  const timeFrame = getFirstParamValue(searchParams.get("timeFrame"));
+  const company = getFirstParamValue(searchParams.get("company"));
+  const location = getFirstParamValue(searchParams.get("location"));
+  const level = getFirstParamValue(searchParams.get("level"));
 
   useEffect(() => {
+    setIsLoading(true);
+    setError(null);
     const controller = new AbortController();
-    const { signal } = controller;
+
+    const queryParams = new URLSearchParams({
+      timeFrame,
+      company,
+      location,
+      level,
+    });
+    if (title !== "your search") {
+      queryParams.append("keyword", title);
+    }
+
+    const hasValidParams = Array.from(queryParams.entries()).some(
+      ([key, value]) => key === "keyword" || value.trim() !== ""
+    );
+    if (!hasValidParams) {
+      setSkills([]);
+      setIsLoading(false);
+      return;
+    }
 
     const fetchData = async () => {
-      if (keyword) {
-        try {
-          const response = await fetch(`http://localhost:5277/search/skills/${encodeURIComponent(keyword)}`, { signal });
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          let data = await response.json();
-          data.sort((a: { percentage: number; }, b: { percentage: number; }) => b.percentage - a.percentage);
-          setSkills(data);
-        } catch (error) {
-          if (error instanceof Error && error.name === 'AbortError') {
-            console.log('Fetch aborted');
-          } else {
-            console.error('Error fetching search results:', error);
-          }
+      try {
+        const response = await fetch(
+          `http://localhost:5277/search/skills?${queryParams.toString()}`,
+          { signal: controller.signal }
+        );
+        if (!response.ok) throw new Error("Network response was not ok");
+        const data = await response.json();
+        setSkills(data);
+      } catch (error) {
+        if (error instanceof Error && error.name !== "AbortError") {
+          console.error("Error fetching search results:", error);
+          setError("Failed to fetch search results. Please try again.");
         }
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchData();
+    return () => controller.abort();
+  }, [title, timeFrame, company, location, level]);
 
-    return () => {
-      controller.abort();
-    };
-  }, [keyword]);
+  const renderSkillsContent = () => {
+    if (isLoading) {
+      return null;
+    }
 
-  const data = {
-    labels: skills.map(skill => skill.skillName),
-    datasets: [
-      {
-        data: skills.map(skill => skill.percentage),
-        backgroundColor: '#15B8A6',
-        borderColor: 'gray',
-        borderWidth: 2,
-        barThickness: 30,
-      },
-    ],
+    if (error) {
+      return (
+        <div className="container mb-20 mx-auto flex flex-col justify-center items-center px-6">
+          <p className="text-xl text-red-500">{error}</p>
+        </div>
+      );
+    }
+
+    if (skills.length > 0) {
+      return (
+        <div
+          className="container mx-auto flex flex-col p-6"
+          style={{ maxWidth: "800px" }}
+        >
+          <ResultsTypeButtons />
+          <p className="text-xl text-left">
+            Top skills for {title || "your search"} jobs
+          </p>
+          <BarChart skills={skills} />
+        </div>
+      );
+    }
+
+    return (
+      <div className="container mb-20 mx-auto flex flex-col justify-center items-center px-6">
+        <p className="text-xl">No skills found for {title || "your search"}.</p>
+      </div>
+    );
   };
-
-  const options = {
-    indexAxis: 'y' as const,
-    maintainAspectRatio: false,
-    layout: {
-      padding: {
-        right: 70,
-        left: 30,
-      }
-    },
-    plugins: {
-      legend: {
-        display: false,
-      },
-      tooltip: {
-        enabled: false,
-      },
-      datalabels: {
-        color: '#FFF',
-        align: 'end' as const,
-        anchor: 'end' as const,
-        font: {
-          size: 13,
-        },
-        formatter: (value: number, context: any) => {
-          return `${value.toFixed(2)}%`;
-        },
-      },
-    },
-    scales: {
-      x: {
-        grid: {
-          display: false,
-        },
-        ticks:{
-          display: false,
-        },
-      },
-      y:{
-        grid: {
-          display: false,
-        },
-        ticks:{
-          beginAtZero: true,
-          color: '#FFF',
-          font: {
-            size: 13,
-          },
-        },
-      },
-    },
-  };
-
-  const calculateChartHeight = () => {
-    const heightPerSkill = 45;
-
-    const dynamicHeight = skills.length * heightPerSkill;
-    return dynamicHeight;
-  };
-
-  return (
-    <div className="container mx-auto flex flex-col justify-center items-center" style={{ height: calculateChartHeight(), maxWidth: '800px' }}>
-      {skills.length > 0 ? (
-          <Bar data={data} options={options} plugins={[ChartDataLabels]} />
-      ) : (
-          <p>No skills found for {keyword}.</p>
-      )}
-    </div>
-  );
+  return <>{renderSkillsContent()}</>;
 };
 
 export default SearchResults;
