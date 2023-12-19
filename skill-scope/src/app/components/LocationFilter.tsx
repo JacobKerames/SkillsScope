@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { MenuProps } from "@mui/material/Menu";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";

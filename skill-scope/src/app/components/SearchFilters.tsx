@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import LocationFilter from "./LocationFilter";
 import TimeFrameFilter from "./TimeFrameFilter";
 import ExperienceLevelFilter from "./ExperienceLevelFilter";
+import CompanyFilter from "./CompanyFilter";
 
 export interface Filters {
   timeFrame: string;
-  company: string;
+  companyId: number | null;
   cityId: number | null;
   stateId: number | null;
   countryId: number | null;
@@ -32,20 +33,8 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
     setLocalFilters(currentFilters);
   }, [currentFilters]);
 
-  const handleChange = (
-    event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
-  ) => {
-    const { name, value } = event.target;
-    const updatedFilters = {
-      ...localFilters,
-      [name]: value,
-    };
-    setLocalFilters(updatedFilters);
-    setFilters(updatedFilters);
-  };
-
-  const handleTimeFrameChange = (newTimeFrame: string) => {
-    const updatedFilters = { ...localFilters, timeFrame: newTimeFrame };
+  const handleChange = (filterType: keyof Filters, value: any) => {
+    const updatedFilters = { ...localFilters, [filterType]: value };
     setLocalFilters(updatedFilters);
     setFilters(updatedFilters);
   };
@@ -65,16 +54,10 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
     setFilters(updatedFilters);
   };
 
-  const handleLevelChange = (newLevel: string) => {
-    const updatedFilters = { ...localFilters, level: newLevel };
-    setLocalFilters(updatedFilters);
-    setFilters(updatedFilters);
-  };
-
   const handleResetFilters = () => {
     const resetFilters: Filters = {
       timeFrame: "",
-      company: "",
+      companyId: null,
       cityId: null,
       stateId: null,
       countryId: null,
@@ -87,22 +70,15 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
   return (
     <div className="bg-transparent border-b border-teal-900 p-6 rounded-lg shadow space-y-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {/* Time Frame Select */}
-        <TimeFrameFilter onTimeFrameChange={handleTimeFrameChange} />
+        <TimeFrameFilter
+          onTimeFrameChange={(value) => handleChange("timeFrame", value)}
+        />
 
-        {/* Company Input */}
-        <div className="flex items-center border-b border-teal-500 py-2">
-          <input
-            className="appearance-none bg-transparent border-none w-full text-white mr-3 py-1 px-2 leading-tight focus:outline-none"
-            type="text"
-            placeholder="Company"
-            name="company"
-            value={localFilters.company}
-            onChange={handleChange}
-          />
-        </div>
+        <CompanyFilter
+          companyId={localFilters.companyId}
+          setCompany={(value) => handleChange("companyId", value)}
+        />
 
-        {/* Location Input */}
         <LocationFilter
           cityId={localFilters.cityId}
           stateId={localFilters.stateId}
@@ -110,8 +86,9 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
           setLocation={handleLocationChange}
         />
 
-        {/* Level Select */}
-        <ExperienceLevelFilter onLevelChange={handleLevelChange} />
+        <ExperienceLevelFilter
+          onLevelChange={(value) => handleChange("level", value)}
+        />
       </div>
       {isAnyFilterSet && (
         <div className="flex justify-center pt-2">
