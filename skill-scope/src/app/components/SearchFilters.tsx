@@ -3,12 +3,14 @@
 import React, { useEffect, useState } from "react";
 import LocationFilter from "./LocationFilter";
 
-export type Filters = {
+export interface Filters {
   timeFrame: string;
   company: string;
-  location: string;
+  cityId: number | null;
+  stateId: number | null;
+  countryId: number | null;
   level: string;
-};
+}
 
 type SearchFiltersProps = {
   setFilters: (filters: Filters) => void;
@@ -40,11 +42,28 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
     setFilters(updatedFilters);
   };
 
+  const handleLocationChange = (
+    cityId: number | null,
+    stateId: number | null,
+    countryId: number | null
+  ) => {
+    const updatedFilters = {
+      ...localFilters,
+      cityId,
+      stateId,
+      countryId,
+    };
+    setLocalFilters(updatedFilters);
+    setFilters(updatedFilters);
+  };
+
   const handleResetFilters = () => {
     const resetFilters: Filters = {
       timeFrame: "",
       company: "",
-      location: "",
+      cityId: null,
+      stateId: null,
+      countryId: null,
       level: "",
     };
     setLocalFilters(resetFilters);
@@ -84,9 +103,12 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
         </div>
 
         {/* Location Input */}
-        <div className="flex items-center border-b border-teal-500 py-2">
-          <LocationFilter />
-        </div>
+        <LocationFilter
+          cityId={localFilters.cityId}
+          stateId={localFilters.stateId}
+          countryId={localFilters.countryId}
+          setLocation={handleLocationChange}
+        />
 
         {/* Level Select */}
         <div className="flex items-center border-b border-teal-500 py-2">

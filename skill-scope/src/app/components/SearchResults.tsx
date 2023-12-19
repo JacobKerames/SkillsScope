@@ -1,9 +1,10 @@
-'use client'
+"use client";
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import BarChart from "./BarChart";
 import ResultsTypeButtons from "./ResultsTypeButtons";
+import CircularProgress from '@mui/material/CircularProgress';
 
 export type Skill = {
   skillName: string;
@@ -16,26 +17,29 @@ const getFirstParamValue = (
 ) => (Array.isArray(param) ? param[0] : param || defaultValue);
 
 const SearchResults = () => {
-  const [skills, setSkills] = useState<Skill[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [skills, setSkills] = useState<Skill[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const searchParams = useSearchParams();
 
   const title = getFirstParamValue(searchParams.get("title"), "your search");
   const timeFrame = getFirstParamValue(searchParams.get("timeFrame"));
   const company = getFirstParamValue(searchParams.get("company"));
-  const location = getFirstParamValue(searchParams.get("location"));
+  const cityId = getFirstParamValue(searchParams.get("cityId"));
+  const stateId = getFirstParamValue(searchParams.get("stateId"));
+  const countryId = getFirstParamValue(searchParams.get("countryId"));
   const level = getFirstParamValue(searchParams.get("level"));
 
   useEffect(() => {
-    setIsLoading(true);
+    setSkills(null);
     setError(null);
     const controller = new AbortController();
 
     const queryParams = new URLSearchParams({
       timeFrame,
       company,
-      location,
+      cityId,
+      stateId,
+      countryId,
       level,
     });
     if (title !== "your search") {
@@ -46,8 +50,7 @@ const SearchResults = () => {
       ([key, value]) => key === "keyword" || value.trim() !== ""
     );
     if (!hasValidParams) {
-      setSkills([]);
-      setIsLoading(false);
+      setSkills(null);
       return;
     }
 
@@ -65,18 +68,20 @@ const SearchResults = () => {
           console.error("Error fetching search results:", error);
           setError("Failed to fetch search results. Please try again.");
         }
-      } finally {
-        setIsLoading(false);
       }
     };
 
     fetchData();
     return () => controller.abort();
-  }, [title, timeFrame, company, location, level]);
+  }, [title, timeFrame, company, cityId, stateId, countryId, level]);
 
   const renderSkillsContent = () => {
-    if (isLoading) {
-      return null;
+    if (skills === null) {
+      return (
+        <div className="container mb-20 mx-auto flex flex-col justify-center items-center px-6 py-12">
+          <CircularProgress />
+        </div>
+      );
     }
 
     if (error) {
@@ -87,24 +92,24 @@ const SearchResults = () => {
       );
     }
 
-    if (skills.length > 0) {
+    if (skills.length === 0) {
       return (
-        <div
-          className="container mx-auto flex flex-col p-6"
-          style={{ maxWidth: "800px" }}
-        >
-          <ResultsTypeButtons />
-          <p className="text-xl text-left">
-            Top skills for {title || "your search"} jobs
-          </p>
-          <BarChart skills={skills} />
+        <div className="container mb-20 mx-auto flex flex-col justify-center items-center px-6">
+          <p className="text-xl">No skills found for {title || "your search"}.</p>
         </div>
       );
     }
 
     return (
-      <div className="container mb-20 mx-auto flex flex-col justify-center items-center px-6">
-        <p className="text-xl">No skills found for {title || "your search"}.</p>
+      <div
+        className="container mx-auto flex flex-col p-6"
+        style={{ maxWidth: "800px" }}
+      >
+        <ResultsTypeButtons />
+        <p className="text-xl text-left">
+          Top skills for {title || "your search"} jobs
+        </p>
+        <BarChart skills={skills} />
       </div>
     );
   };

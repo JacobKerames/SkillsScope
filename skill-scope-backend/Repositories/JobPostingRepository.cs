@@ -17,6 +17,8 @@ namespace skill_scope_backend.Repositories
         FROM job_postings jp
         JOIN skill_qualifications sq ON jp.job_posting_id = sq.job_posting_id
         JOIN skills s ON sq.skill_id = s.skill_id
+        LEFT JOIN job_posting_levels jpl ON jp.job_posting_id = jpl.job_posting_id
+        LEFT JOIN job_levels jl ON jpl.level_id = jl.level_id
         WHERE to_tsvector('english', jp.title) @@ plainto_tsquery('english', @Keyword)";
 
       if (!string.IsNullOrEmpty(parameters.TimeFrame))
@@ -37,19 +39,24 @@ namespace skill_scope_backend.Repositories
           )";
       }
 
-      if (!string.IsNullOrEmpty(parameters.Location))
+      if (parameters.CityId.HasValue)
       {
-        sql += @"
-          AND jp.city_id
-          IN (
-            SELECT city_id FROM cities 
-            WHERE name ILIKE @City
-          )";
+        sql += " AND jp.city_id = @CityId";
+      }
+
+      if (parameters.StateId.HasValue)
+      {
+        sql += " AND jp.state_id = @StateId";
+      }
+
+      if (parameters.CountryId.HasValue)
+      {
+        sql += " AND jp.country_id = @CountryId";
       }
 
       if (!string.IsNullOrEmpty(parameters.Level))
       {
-        sql += " AND jp.level = @Level";
+        sql += " AND LOWER(jl.level_name) = LOWER(@Level)";
       }
 
       sql += @"
@@ -63,7 +70,9 @@ namespace skill_scope_backend.Repositories
         parameters.StartDate,
         parameters.EndDate,
         Company = $"%{parameters.Company}%",
-        Location = $"%{parameters.Location}%",
+        parameters.CityId,
+        parameters.StateId,
+        parameters.CountryId,
         parameters.Level
       });
 

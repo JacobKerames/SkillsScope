@@ -29,7 +29,23 @@ interface Location {
   country: Country;
 }
 
-const LocationFilter = () => {
+interface LocationFilterProps {
+  cityId: number | null;
+  stateId: number | null;
+  countryId: number | null;
+  setLocation: (
+    cityId: number | null,
+    stateId: number | null,
+    countryId: number | null
+  ) => void;
+}
+
+const LocationFilter: React.FC<LocationFilterProps> = ({
+  cityId,
+  stateId,
+  countryId,
+  setLocation,
+}) => {
   const [locations, setLocations] = useState<Location[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(
     null
@@ -46,7 +62,6 @@ const LocationFilter = () => {
           throw new Error("Failed to fetch locations");
         }
         const data: Location[] = await response.json();
-        console.log(data);
         setLocations(data);
       } catch (error) {
         console.error("Error fetching locations:", error);
@@ -56,6 +71,24 @@ const LocationFilter = () => {
 
     fetchLocations();
   }, []);
+
+  useEffect(() => {
+    const foundLocation = locations.find(
+      (loc) =>
+        loc.city?.cityId === cityId &&
+        loc.state?.stateId === stateId &&
+        loc.country.countryId === countryId
+    );
+    setSelectedLocation(foundLocation || null);
+  }, [cityId, stateId, countryId, locations]);
+
+  const isOptionEqualToValue = (option: Location, value: Location | null) => {
+    return (
+      option.city?.cityId === value?.city?.cityId &&
+      option.state?.stateId === value?.state?.stateId &&
+      option.country.countryId === value?.country.countryId
+    );
+  };
 
   const getLocationLabel = (location: Location): string => {
     if (location.city) {
@@ -74,65 +107,77 @@ const LocationFilter = () => {
     return defaultFilterOptions(options, state).slice(0, 10);
   };
 
+  const handleLocationChange = (
+    _event: React.ChangeEvent<{}>,
+    newValue: Location | null
+  ) => {
+    const cityId = newValue?.city?.cityId || null;
+    const stateId = newValue?.state?.stateId || null;
+    const countryId = newValue?.country?.countryId || null;
+    setSelectedLocation(newValue);
+    setLocation(cityId, stateId, countryId);
+  };
+
   return (
-    <Autocomplete
-      id="field1"
-      forcePopupIcon={false}
-      sx={{
-        width: "100%",
-        "& .MuiInputBase-root": {
-          padding: "0", // Remove padding
-        },
-      }}
-      options={locations}
-      filterOptions={filterOptions}
-      autoHighlight
-      getOptionLabel={(option) => getLocationLabel(option)}
-      renderOption={(props, option) => (
-        <Box
-          component="li"
-          {...props}
-          key={`${option.city?.cityId}-${option.state?.stateId}-${option.country.countryId}`}
-        >
-          {getLocationLabel(option)}
-        </Box>
-      )}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          placeholder="Location"
-          sx={{
-            "& .MuiOutlinedInput-root": {
-              padding: "0",
-              "& fieldset": {
-                borderColor: "transparent", // Remove the border color
+    <div className="flex items-center border-b border-teal-500 py-2">
+      <Autocomplete
+        id="field1"
+        forcePopupIcon={false}
+        sx={{
+          width: "100%",
+          "& .MuiInputBase-root": {
+            padding: "0", // Remove padding
+          },
+        }}
+        value={selectedLocation}
+        onChange={handleLocationChange}
+        options={locations}
+        filterOptions={filterOptions}
+        autoHighlight
+        isOptionEqualToValue={isOptionEqualToValue}
+        getOptionLabel={(option) => getLocationLabel(option)}
+        renderOption={(props, option) => (
+          <Box
+            component="li"
+            {...props}
+            key={`${option.city?.cityId}-${option.state?.stateId}-${option.country.countryId}`}
+          >
+            {getLocationLabel(option)}
+          </Box>
+        )}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            placeholder="Location"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                padding: "0",
+                "& fieldset": {
+                  borderColor: "transparent", // Remove the border color
+                },
+                "&:hover fieldset": {
+                  borderColor: "transparent", // Remove the hover border color
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "transparent", // Remove the focus border color
+                },
+                "& .MuiAutocomplete-input": {
+                  padding: "4px 8px",
+                },
               },
-              "&:hover fieldset": {
-                borderColor: "transparent", // Remove the hover border color
+              "& .MuiAutocomplete-clearIndicator": {
+                color: "white",
               },
-              "&.Mui-focused fieldset": {
-                borderColor: "transparent", // Remove the focus border color
-              },
-              "& .MuiAutocomplete-input": {
-                padding: "4px 8px",
-              },
-            },
-            "& .MuiAutocomplete-clearIndicator": {
-              color: "white",
-            },
-						'& .MuiInputBase-input::placeholder': {
-							color: 'grey', // Set the placeholder color
-							opacity: 1, // Override the default opacity to ensure the color is not translucent
-						},
-          }}
-          inputProps={{
-            ...params.inputProps,
-            autoComplete: "new-password",
-            style: { color: "white" },
-          }}
-        />
-      )}
-    />
+            }}
+            inputProps={{
+              ...params.inputProps,
+              autoComplete: "new-password",
+              style: { color: "white" },
+            }}
+          />
+        )}
+      />
+    </div>
   );
 };
 
