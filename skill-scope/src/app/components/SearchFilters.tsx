@@ -1,6 +1,5 @@
-"use client";
-
 import { useEffect, useState } from "react";
+import { Container, Grid, Button, Paper } from "@mantine/core";
 import LocationFilter from "./LocationFilter";
 import TimeFrameFilter from "./TimeFrameFilter";
 import ExperienceLevelFilter from "./ExperienceLevelFilter";
@@ -68,42 +67,45 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
   };
 
   return (
-    <div className="bg-transparent border-b border-teal-700 p-6 rounded-lg shadow space-y-4">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <TimeFrameFilter
-          timeFrame={localFilters.timeFrame}
-          onTimeFrameChange={(value) => handleChange("timeFrame", value)}
-        />
+    <Paper shadow="sm" p="md" withBorder>
+      <Grid gutter="md">
+        {/* Grid items for each filter */}
+        <Grid.Col span={6}>
+          <TimeFrameFilter
+            timeFrame={localFilters.timeFrame}
+            onTimeFrameChange={(value) => handleChange("timeFrame", value)}
+          />
+        </Grid.Col>
 
-        <CompanyFilter
-          companyId={localFilters.companyId}
-          setCompany={(value) => handleChange("companyId", value)}
-        />
+        <Grid.Col span={6}>
+          <CompanyFilter
+            companyId={localFilters.companyId}
+            setCompany={(value) => handleChange("companyId", value)}
+          />
+        </Grid.Col>
 
-        <LocationFilter
-          cityId={localFilters.cityId}
-          stateId={localFilters.stateId}
-          countryId={localFilters.countryId}
-          setLocation={handleLocationChange}
-        />
+        <Grid.Col span={6}>
+          <LocationFilter
+            cityId={localFilters.cityId}
+            stateId={localFilters.stateId}
+            countryId={localFilters.countryId}
+            setLocation={handleLocationChange}
+          />
+        </Grid.Col>
 
-        <ExperienceLevelFilter
-          level={localFilters.level}
-          onLevelChange={(value) => handleChange("level", value)}
-        />
-      </div>
+        <Grid.Col span={6}>
+          <ExperienceLevelFilter
+            level={localFilters.level}
+            onLevelChange={(value) => handleChange("level", value)}
+          />
+        </Grid.Col>
+      </Grid>
       {isAnyFilterSet && (
-        <div className="flex justify-center pt-2">
-          <button
-            className="text-sm py-1 px-2 rounded border-4 text-white bg-teal-600 border-teal-600 hover:bg-teal-700 hover:border-teal-700"
-            type="button"
-            onClick={handleResetFilters}
-          >
-            Reset
-          </button>
-        </div>
+        <Container my="md" size="xs" style={{ textAlign: "center" }}>
+          <Button onClick={handleResetFilters}>Reset</Button>
+        </Container>
       )}
-    </div>
+    </Paper>
   );
 };
 
