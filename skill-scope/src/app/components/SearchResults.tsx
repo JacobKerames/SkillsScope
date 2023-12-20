@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Loader, Container, Text, Title, Center } from "@mantine/core";
 import { useSearchParams } from "next/navigation";
 import BarChart from "./BarChart";
 import ResultsTypeButtons from "./ResultsTypeButtons";
-import CircularProgress from "@mui/material/CircularProgress";
 
 export type Results = {
   resultName: string;
@@ -74,7 +74,16 @@ const SearchResults = () => {
 
     fetchData();
     return () => controller.abort();
-  }, [activeTab, title, timeFrame, companyId, cityId, stateId, countryId, level]);
+  }, [
+    activeTab,
+    title,
+    timeFrame,
+    companyId,
+    cityId,
+    stateId,
+    countryId,
+    level,
+  ]);
 
   const generateResultsLabel = () => {
     let label = "";
@@ -118,24 +127,26 @@ const SearchResults = () => {
   const renderResultsContent = () => {
     if (results === null) {
       return (
-        <div className="container mb-20 mx-auto flex flex-col justify-center items-center px-6 py-12">
-          <CircularProgress />
-        </div>
+        <Center className="mb-20">
+          <Loader />
+        </Center>
       );
     }
 
     if (error) {
       return (
-        <div className="container mb-20 mx-auto flex flex-col justify-center items-center px-6">
-          <p className="text-xl text-red-500">{error}</p>
-        </div>
+        <Center className="mb-20">
+          <Text color="red" size="xl">
+            {error}
+          </Text>
+        </Center>
       );
     }
 
     if (results.length === 0) {
       return (
-        <div className="container mb-20 mx-auto flex flex-col justify-center items-center px-6">
-          <p className="text-xl text-neutral-200">
+        <Center className="mb-20">
+          <Text size="xl" color="neutral-200">
             No {activeTab} found for{" "}
             {title &&
               title
@@ -143,21 +154,18 @@ const SearchResults = () => {
                 .filter((word) => word)
                 .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
                 .join(" ")}
-          </p>
-          <p className="text-lg text-left text-gray-500">
+          </Text>
+          <Text size="lg" color="gray-500">
             {generateResultsLabel()}
-          </p>
-        </div>
+          </Text>
+        </Center>
       );
     }
 
     return (
-      <div
-        className="container mx-auto flex flex-col p-6"
-        style={{ maxWidth: "800px" }}
-      >
+      <Container style={{ maxWidth: "800px" }}>
         <ResultsTypeButtons activeTab={activeTab} setActiveTab={setActiveTab} />
-        <p className="text-xl text-left text-neutral-200">
+        <Title order={3}>
           Top {activeTab} for{" "}
           {title &&
             title
@@ -166,14 +174,15 @@ const SearchResults = () => {
               .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
               .join(" ")}{" "}
           jobs
-        </p>
-        <p className="text-lg text-left text-gray-500">
+        </Title>
+        <Text size="lg" color="gray-500">
           {generateResultsLabel()}
-        </p>
+        </Text>
         <BarChart results={results} />
-      </div>
+      </Container>
     );
   };
+
   return <>{renderResultsContent()}</>;
 };
 
