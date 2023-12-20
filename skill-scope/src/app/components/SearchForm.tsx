@@ -46,12 +46,6 @@ const SearchForm: React.FC<SearchFormProps> = ({
     );
   };
 
-  const handleFilters = () => {
-    if (toggleFilters) {
-      toggleFilters();
-    }
-  };
-
   return (
     <>
       <form onSubmit={handleSearch}>
@@ -65,7 +59,7 @@ const SearchForm: React.FC<SearchFormProps> = ({
           <Button type="submit">Search</Button>
           {pathname !== "/" && (
             <Button
-              onClick={handleFilters}
+              onClick={toggleFilters}
               variant={showFilters ? "filled" : "outline"}
             >
               Filter

@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Container, Title, Text, Collapse } from '@mantine/core';
+import { Container, Title, Text, Collapse } from "@mantine/core";
+import { useDisclosure, useInputState } from "@mantine/hooks";
 import { useRouter } from "next/navigation";
 import { metadata } from "../metadata";
 import SearchForm from "../components/SearchForm";
@@ -9,8 +10,8 @@ import SearchFilters from "../components/SearchFilters";
 import { Filters } from "../components/SearchFilters";
 
 const SearchResultsPage = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [showFilters, setShowFilters] = useState(false);
+  const [searchTerm, setSearchTerm] = useInputState("");
+  const [showFilters, { toggle }] = useDisclosure(false);
   const [filters, setFilters] = useState<Filters>({
     timeFrame: "",
     companyId: null,
@@ -66,10 +67,6 @@ const SearchResultsPage = () => {
     router.replace(`/search?${queryParams.toString()}`);
   }, [searchTerm, filters, router]);
 
-  const toggleFilters = () => {
-    setShowFilters((prev) => !prev);
-  };
-
   const handleFilterChange = (updatedFilters: Filters) => {
     setFilters(updatedFilters);
   };
@@ -77,17 +74,17 @@ const SearchResultsPage = () => {
   return (
     <>
       <Container size="md" mt="md">
-        <Title order={1} style={{ textAlign: 'center' }} my="md">
+        <Title order={1} style={{ textAlign: "center" }} my="md">
           {metadata.title}
         </Title>
-        <Text size="xl" style={{ textAlign: 'center' }} my="md">
+        <Text size="xl" style={{ textAlign: "center" }} my="md">
           {metadata.description}
         </Text>
         <SearchForm
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
           showFilters={showFilters}
-          toggleFilters={toggleFilters}
+          toggleFilters={toggle}
         />
         <Collapse in={showFilters}>
           <SearchFilters

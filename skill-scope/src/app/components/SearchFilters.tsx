@@ -69,7 +69,6 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
   return (
     <Paper shadow="sm" p="md" withBorder>
       <Grid gutter="md">
-        {/* Grid items for each filter */}
         <Grid.Col span={6}>
           <TimeFrameFilter
             timeFrame={localFilters.timeFrame}
