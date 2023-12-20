@@ -1,18 +1,47 @@
-'use client'
+"use client";
 
-import { useState } from 'react';
-import { metadata } from './metadata';
-import SearchForm from './components/SearchForm';
+import { useState } from "react";
+import { Container, Title, Text, Box } from "@mantine/core";
+import { metadata } from "./metadata";
+import SearchForm from "./components/SearchForm";
 
 const Home = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  
+
   return (
-    <div className="container mx-auto h-screen flex flex-col justify-center items-center p-6">
-      <h1 className="text-5xl text-center text-neutral-200 mb-4">{metadata.title}</h1>
-      <p className="text-xl text-center text-neutral-200 mb-8">{metadata.description}</p>
-      <SearchForm searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-    </div>
+    <Container size="sm" style={{ height: "100vh" }}>
+      <Box
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100%",
+        }}
+      >
+        <Title
+          order={1}
+          style={{
+            textAlign: "center",
+            color: "neutral-200",
+            marginBottom: "1rem",
+          }}
+        >
+          {metadata.title}
+        </Title>
+        <Text
+          size="xl"
+          style={{
+            textAlign: "center",
+            color: "neutral-200",
+            marginBottom: "2rem",
+          }}
+        >
+          {metadata.description}
+        </Text>
+        <SearchForm searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+      </Box>
+    </Container>
   );
 };
 
