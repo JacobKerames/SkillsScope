@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Container, Title, Text, Collapse } from '@mantine/core';
 import { useRouter } from "next/navigation";
 import { metadata } from "../metadata";
 import SearchForm from "../components/SearchForm";
@@ -76,22 +77,26 @@ const SearchResultsPage = () => {
 
   return (
     <>
-      <div className="container mt-6 mx-auto flex flex-col justify-center items-center p-6">
-        <h1 className="text-5xl text-center mb-4">{metadata.title}</h1>
-        <p className="text-xl text-center mb-8">{metadata.description}</p>
+      <Container size="md" mt="md">
+        <Title order={1} style={{ textAlign: 'center' }} my="md">
+          {metadata.title}
+        </Title>
+        <Text size="xl" style={{ textAlign: 'center' }} my="md">
+          {metadata.description}
+        </Text>
         <SearchForm
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
           showFilters={showFilters}
           toggleFilters={toggleFilters}
         />
-        {showFilters && (
+        <Collapse in={showFilters}>
           <SearchFilters
             currentFilters={filters}
             setFilters={handleFilterChange}
           />
-        )}
-      </div>
+        </Collapse>
+      </Container>
       <SearchResults />
     </>
   );
