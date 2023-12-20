@@ -1,9 +1,8 @@
-"use client";
-
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa";
+import { TextInput, Button, Group, Alert } from "@mantine/core";
 
 type SearchFormProps = {
   searchTerm: string;
@@ -27,7 +26,7 @@ const SearchForm: React.FC<SearchFormProps> = ({
   const handleSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!isValidSearchTerm(searchTerm)) {
-      setErrorMessage("The search term cannot contain the '%' symbol.");
+      setErrorMessage('The search term cannot contain the "%" symbol.');
       return;
     }
     setErrorMessage("");
@@ -43,7 +42,7 @@ const SearchForm: React.FC<SearchFormProps> = ({
     setErrorMessage(
       isValidSearchTerm(newTerm)
         ? ""
-        : "The search term cannot contain the '%' symbol."
+        : 'The search term cannot contain the "%" symbol.'
     );
   };
 
@@ -55,45 +54,30 @@ const SearchForm: React.FC<SearchFormProps> = ({
 
   return (
     <>
-      <form onSubmit={handleSearch} className="w-full max-w-lg">
-        <div className="flex items-center border-b border-teal-600 py-2 gap-4">
-          <input
-            className="appearance-none bg-transparent border-none w-full text-white mr-3 py-1 px-2 leading-tight focus:outline-none"
-            type="text"
-            placeholder="Search job titles..."
-            aria-label="Job title search"
+      <form onSubmit={handleSearch}>
+        <Group gap="xs" align="center">
+          <TextInput
             value={searchTerm}
             onChange={handleInputChange}
+            placeholder="Search job titles..."
+            aria-label="Job title search"
           />
-          <button
-            className="flex-shrink-0 bg-teal-600 hover:bg-teal-700 border-teal-600 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded"
-            type="submit"
-          >
-            Search
-          </button>
+          <Button type="submit">Search</Button>
           {pathname !== "/" && (
-            <button
-              className={`flex items-center justify-center text-sm py-1 px-2 rounded border-4 text-white ${
-                showFilters
-                  ? "bg-teal-700 border-teal-700 hover:bg-teal-600 hover:border-teal-600"
-                  : "bg-teal-600 border-teal-600 hover:bg-teal-700 hover:border-teal-700"
-              }`}
-              type="button"
+            <Button
               onClick={handleFilters}
+              variant={showFilters ? "filled" : "outline"}
             >
               Filter
-              {showFilters ? (
-                <FaCaretUp className="ml-1" />
-              ) : (
-                <FaCaretDown className="ml-1" />
-              )}
-            </button>
+              {showFilters ? <FaCaretUp /> : <FaCaretDown />}
+            </Button>
           )}
-        </div>
+        </Group>
+
         {errorMessage && (
-          <div className="text-red-500" aria-live="assertive">
+          <Alert color="red" aria-live="assertive">
             {errorMessage}
-          </div>
+          </Alert>
         )}
       </form>
     </>
