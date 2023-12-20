@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { Container, Title, Text, Box } from "@mantine/core";
 import { metadata } from "./metadata";

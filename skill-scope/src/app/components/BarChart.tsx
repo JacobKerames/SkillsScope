@@ -1,5 +1,3 @@
-"use client";
-
 import { useRef, useEffect, useState } from "react";
 import { Results } from "./SearchResults";
 import * as d3 from "d3";

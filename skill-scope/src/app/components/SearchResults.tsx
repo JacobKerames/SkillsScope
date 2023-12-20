@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { Loader, Container, Text, Title, Center } from "@mantine/core";
 import { useSearchParams } from "next/navigation";

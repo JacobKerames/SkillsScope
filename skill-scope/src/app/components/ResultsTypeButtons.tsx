@@ -1,5 +1,3 @@
-"use client";
-
 interface ResultsTypeButtonsProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;

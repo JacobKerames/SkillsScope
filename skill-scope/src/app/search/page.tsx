@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { Container, Title, Text, Collapse } from '@mantine/core';
 import { useRouter } from "next/navigation";
