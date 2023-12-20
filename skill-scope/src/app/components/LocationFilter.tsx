@@ -19,8 +19,6 @@ interface State {
 interface Country {
   countryId: number;
   countryName: string;
-  iso3: string;
-  iso2: string;
 }
 
 interface Location {
@@ -148,7 +146,7 @@ const LocationFilter: React.FC<LocationFilterProps> = ({
         renderInput={(params) => (
           <TextField
             {...params}
-            placeholder="Location"
+            placeholder="City, State, or Country"
             sx={{
               "& .MuiOutlinedInput-root": {
                 padding: "0",

@@ -68,7 +68,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
   };
 
   return (
-    <div className="bg-transparent border-b border-teal-900 p-6 rounded-lg shadow space-y-4">
+    <div className="bg-transparent border-b border-teal-700 p-6 rounded-lg shadow space-y-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <TimeFrameFilter
           timeFrame={localFilters.timeFrame}
