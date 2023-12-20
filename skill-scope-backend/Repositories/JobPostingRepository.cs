@@ -31,7 +31,7 @@ namespace skill_scope_backend.Repositories
     {
       var sqlQuery = @"
         SELECT
-          eq.education_level || ' in ' || ef.educational_field_name AS ResultName,
+          INITCAP(REPLACE(eq.education_level::text, '_', ' ')) || ' in ' || ef.educational_field_name AS ResultName,
           COUNT(*) * 100.0 / SUM(COUNT(*)) OVER() AS Percentage
         FROM job_postings jp
         JOIN educational_qualifications eq ON jp.job_posting_id = eq.job_posting_id
@@ -176,8 +176,8 @@ namespace skill_scope_backend.Repositories
           parameters.StartDate = parameters.EndDate.Value.AddYears(-5);
           break;
         default:
-          // Handle default case or invalid values
-          break;
+          throw new ArgumentOutOfRangeException(nameof(parameters),
+            $"Unsupported time frame: {parameters.TimeFrame} in the 'TimeFrame' property of 'SearchDTO'.");
       }
     }
   }

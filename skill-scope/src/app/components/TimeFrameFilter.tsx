@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { MenuProps } from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -20,14 +19,12 @@ const menuProps: Partial<MenuProps> = {
 };
 
 interface TimeFrameFilterProps {
+	timeFrame: string;
   onTimeFrameChange: (value: string) => void;
 }
 
-const TimeFrameFilter: React.FC<TimeFrameFilterProps> = ({ onTimeFrameChange }) => {
-	const [timeFrame, setTimeFrame] = useState('');
-
+const TimeFrameFilter: React.FC<TimeFrameFilterProps> = ({ timeFrame, onTimeFrameChange }) => {
   const handleChange = (event: SelectChangeEvent) => {
-    setTimeFrame(event.target.value);
     onTimeFrameChange(event.target.value);
   };
 
@@ -63,7 +60,7 @@ const TimeFrameFilter: React.FC<TimeFrameFilterProps> = ({ onTimeFrameChange }) 
 						}
 					}}
 					MenuProps={menuProps}
-					sx={{ 
+					sx={{
 						color: '#E6E6E6',
 						'& .MuiSelect-select': {
 							padding: '4px 8px',

@@ -71,6 +71,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
     <div className="bg-transparent border-b border-teal-900 p-6 rounded-lg shadow space-y-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <TimeFrameFilter
+          timeFrame={localFilters.timeFrame}
           onTimeFrameChange={(value) => handleChange("timeFrame", value)}
         />
 
@@ -87,6 +88,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
         />
 
         <ExperienceLevelFilter
+          level={localFilters.level}
           onLevelChange={(value) => handleChange("level", value)}
         />
       </div>
