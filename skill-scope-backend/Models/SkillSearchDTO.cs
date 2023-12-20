@@ -1,5 +1,5 @@
 namespace skill_scope_backend.Models;
-public class SkillSearchDTO
+public class SearchDTO
 {
     public required string Keyword { get; set; }
     public string? TimeFrame { get; set; }

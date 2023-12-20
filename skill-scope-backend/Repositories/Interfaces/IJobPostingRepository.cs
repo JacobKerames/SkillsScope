@@ -4,9 +4,9 @@ namespace skill_scope_backend.Repositories
 {
     public interface IJobPostingRepository
     {
-        Task<IEnumerable<SkillDTO>> GetTitleSkillDesireAsync(SkillSearchDTO parameters);
-        Task<IEnumerable<EducationDTO>> GetTitleEducationDesireAsync(string keyword);
-        Task<IEnumerable<ExperienceDTO>> GetTitleExperienceDesireAsync(string keyword);
+        Task<IEnumerable<ResultDTO>> GetTitleSkillDesireAsync(SearchDTO parameters);
+        Task<IEnumerable<ResultDTO>> GetTitleEducationDesireAsync(SearchDTO parameters);
+        Task<IEnumerable<ResultDTO>> GetTitleExperienceDesireAsync(SearchDTO parameters);
         Task<int> AddAsync(JobPosting jobPosting);
     }
 }

@@ -11,38 +11,38 @@ public class SearchController(IJobPostingRepository jobPostingRepository) : Cont
     private readonly IJobPostingRepository _jobPostingRepository = jobPostingRepository;
 
     [HttpGet("skills")]
-    public async Task<IActionResult> GetSkills([FromQuery] SkillSearchDTO parameters)
+    public async Task<IActionResult> GetSkills([FromQuery] SearchDTO parameters)
     {
         if (string.IsNullOrWhiteSpace(parameters.Keyword))
         {
             return BadRequest("Search query cannot be empty.");
         }
 
-        var skills = await _jobPostingRepository.GetTitleSkillDesireAsync(parameters);
-        return Ok(skills);
+        var results = await _jobPostingRepository.GetTitleSkillDesireAsync(parameters);
+        return Ok(results);
     }
 
-    [HttpGet("education/{keyword}")]
-    public async Task<IActionResult> GetEducation(string keyword)
+    [HttpGet("education")]
+    public async Task<IActionResult> GetEducation([FromQuery] SearchDTO parameters)
     {
-        if (string.IsNullOrWhiteSpace(keyword))
+        if (string.IsNullOrWhiteSpace(parameters.Keyword))
         {
             return BadRequest("Search query cannot be empty.");
         }
 
-        var educationStats = await _jobPostingRepository.GetTitleEducationDesireAsync(keyword);
-        return Ok(educationStats);
+        var results = await _jobPostingRepository.GetTitleEducationDesireAsync(parameters);
+        return Ok(results);
     }
 
-    [HttpGet("experience/{keyword}")]
-    public async Task<IActionResult> GetExperience(string keyword)
+    [HttpGet("experience")]
+    public async Task<IActionResult> GetExperience([FromQuery] SearchDTO parameters)
     {
-        if (string.IsNullOrWhiteSpace(keyword))
+        if (string.IsNullOrWhiteSpace(parameters.Keyword))
         {
             return BadRequest("Search query cannot be empty.");
         }
 
-        var experienceStats = await _jobPostingRepository.GetTitleExperienceDesireAsync(keyword);
-        return Ok(experienceStats);
+        var results = await _jobPostingRepository.GetTitleExperienceDesireAsync(parameters);
+        return Ok(results);
     }
 }

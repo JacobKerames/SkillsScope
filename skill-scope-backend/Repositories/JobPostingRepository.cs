@@ -9,16 +9,86 @@ namespace skill_scope_backend.Repositories
   {
     private readonly string? _connectionString = configuration.GetConnectionString("DefaultConnection");
 
-    public async Task<IEnumerable<SkillDTO>> GetTitleSkillDesireAsync(SkillSearchDTO parameters)
+    public async Task<IEnumerable<ResultDTO>> GetTitleSkillDesireAsync(SearchDTO parameters)
     {
-      var sql = @"
-        SELECT s.skill_name AS SkillName, 
+      var sqlQuery = @"
+        SELECT s.skill_name AS ResultName, 
           COUNT(*) * 100.0 / SUM(COUNT(*)) OVER() AS Percentage
         FROM job_postings jp
         JOIN skill_qualifications sq ON jp.job_posting_id = sq.job_posting_id
-        JOIN skills s ON sq.skill_id = s.skill_id
+        JOIN skills s ON sq.skill_id = s.skill_id";
+
+      var groupByClause = "GROUP BY s.skill_name";
+
+      return await GetResultsAsync(
+        parameters,
+        sqlQuery,
+        groupByClause
+      );
+    }
+
+    public async Task<IEnumerable<ResultDTO>> GetTitleEducationDesireAsync(SearchDTO parameters)
+    {
+      var sqlQuery = @"
+        SELECT
+          eq.education_level || ' in ' || ef.educational_field_name AS ResultName,
+          COUNT(*) * 100.0 / SUM(COUNT(*)) OVER() AS Percentage
+        FROM job_postings jp
+        JOIN educational_qualifications eq ON jp.job_posting_id = eq.job_posting_id
+        JOIN educational_fields ef ON eq.educational_field_id = ef.educational_field_id";
+
+      var groupByClause = "GROUP BY eq.education_level, ef.educational_field_name";
+
+      return await GetResultsAsync(
+        parameters,
+        sqlQuery,
+        groupByClause
+      );
+    }
+
+    public async Task<IEnumerable<ResultDTO>> GetTitleExperienceDesireAsync(SearchDTO parameters)
+    {
+      var sqlQuery = @"
+        SELECT
+          CASE
+            WHEN eq.experience_type = 'job_title' THEN
+              CASE
+                WHEN eq.years_experience = 1 THEN eq.years_experience || ' year as a ' || eq.experience_reference
+                ELSE eq.years_experience || ' years as a ' || eq.experience_reference
+              END
+            WHEN eq.experience_type = 'skill' THEN
+              CASE
+                WHEN eq.years_experience = 1 THEN eq.years_experience || ' year using ' || s.skill_name
+                ELSE eq.years_experience || ' years using ' || s.skill_name
+              END
+          END AS ResultName,
+          COUNT(*) * 100.0 / SUM(COUNT(*)) OVER() AS Percentage
+        FROM job_postings jp
+        JOIN experience_qualifications eq ON jp.job_posting_id = eq.job_posting_id
+        LEFT JOIN skills s ON eq.skill_id = s.skill_id";
+
+      var groupByClause = @"
+        GROUP BY eq.experience_type, eq.years_experience, eq.experience_reference, s.skill_name";
+
+      return await GetResultsAsync(
+        parameters,
+        sqlQuery,
+        groupByClause
+      );
+    }
+
+    public async Task<IEnumerable<ResultDTO>> GetResultsAsync(SearchDTO parameters, string sqlQuery, string groupByClause)
+    {
+      var sql = $"{sqlQuery}";
+
+      if (!string.IsNullOrEmpty(parameters.Level))
+      {
+        sql += @"
         LEFT JOIN job_posting_levels jpl ON jp.job_posting_id = jpl.job_posting_id
-        LEFT JOIN job_levels jl ON jpl.level_id = jl.level_id
+        LEFT JOIN job_levels jl ON jpl.level_id = jl.level_id";
+      }
+
+      sql += @"
         WHERE to_tsvector('english', jp.title) @@ plainto_tsquery('english', @Keyword)";
 
       if (!string.IsNullOrEmpty(parameters.TimeFrame))
@@ -54,12 +124,12 @@ namespace skill_scope_backend.Repositories
         sql += " AND LOWER(jl.level_name) = LOWER(@Level)";
       }
 
-      sql += @"
-        GROUP BY s.skill_name
+      sql += $@"
+        {groupByClause}
         ORDER BY Percentage DESC;";
 
       using IDbConnection db = new NpgsqlConnection(_connectionString);
-      var skillStats = await db.QueryAsync<SkillDTO>(sql, new
+      var results = await db.QueryAsync<ResultDTO>(sql, new
       {
         parameters.Keyword,
         parameters.StartDate,
@@ -71,10 +141,23 @@ namespace skill_scope_backend.Repositories
         parameters.Level
       });
 
-      return skillStats;
+      return results;
     }
 
-    public static void TimeFrameConverter(SkillSearchDTO parameters)
+    public async Task<int> AddAsync(JobPosting jobPosting)
+    {
+      using IDbConnection db = new NpgsqlConnection(_connectionString);
+      var sql = @"
+        INSERT INTO job_postings 
+        (title, company_id, city_id, state_id, country_id, posted_date) 
+        VALUES 
+        (@Title, @CompanyId, @CityId, @StateId, @CountryId, @PostedDate) 
+        RETURNING job_posting_id";
+
+      return await db.QuerySingleAsync<int>(sql, jobPosting);
+    }
+
+    public static void TimeFrameConverter(SearchDTO parameters)
     {
       parameters.EndDate = DateTime.Today;
 
@@ -96,52 +179,6 @@ namespace skill_scope_backend.Repositories
           // Handle default case or invalid values
           break;
       }
-    }
-
-    public async Task<IEnumerable<EducationDTO>> GetTitleEducationDesireAsync(string keyword)
-    {
-      var sql = @"
-        SELECT eq.EducationLevel, ef.EducationalFieldName,
-          COUNT(*) * 100.0 / SUM(COUNT(*)) OVER() AS Percentage
-        FROM JobPostings jp
-        JOIN EducationalQualifications eq ON jp.JobPostingId = eq.JobPostingId
-        JOIN EducationalFields ef ON eq.EducationalFieldId = ef.EducationalFieldId
-        WHERE CONTAINS(jp.Title, @Keyword)
-        GROUP BY eq.EducationLevel, ef.EducationalFieldName";
-
-      using IDbConnection db = new NpgsqlConnection(_connectionString);
-      var educationStats = await db.QueryAsync<EducationDTO>(sql, new { Keyword = keyword });
-
-      return educationStats;
-    }
-
-    public async Task<IEnumerable<ExperienceDTO>> GetTitleExperienceDesireAsync(string keyword)
-    {
-      var sql = @"
-        SELECT eq.ExperienceReference, eq.YearsExperience,
-          COUNT(*) * 100.0 / SUM(COUNT(*)) OVER() AS Percentage
-        FROM JobPostings jp
-        JOIN ExperienceQualifications eq ON jp.JobPostingId = eq.JobPostingId
-        WHERE CONTAINS(jp.Title, @Keyword)
-        GROUP BY eq.ExperienceReference, eq.YearsExperience";
-
-      using IDbConnection db = new NpgsqlConnection(_connectionString);
-      var experienceStats = await db.QueryAsync<ExperienceDTO>(sql, new { Keyword = keyword });
-
-      return experienceStats;
-    }
-
-    public async Task<int> AddAsync(JobPosting jobPosting)
-    {
-      using IDbConnection db = new NpgsqlConnection(_connectionString);
-      var sql = @"
-        INSERT INTO job_postings 
-        (title, company_id, city_id, state_id, country_id, posted_date) 
-        VALUES 
-        (@Title, @CompanyId, @CityId, @StateId, @CountryId, @PostedDate) 
-        RETURNING job_posting_id";
-
-      return await db.QuerySingleAsync<int>(sql, jobPosting);
     }
   }
 }
