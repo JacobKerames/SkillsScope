@@ -1,8 +1,5 @@
 import { useState, useEffect } from "react";
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
-import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
-import { FilterOptionsState, Paper, Popper } from "@mui/material";
+import { Autocomplete, Box } from '@mantine/core';
 
 interface Company {
   companyId: number;
@@ -22,7 +19,6 @@ const CompanyFilter: React.FC<CompanyFilterProps> = ({
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(
     null
   );
-  const defaultFilterOptions = createFilterOptions<Company>();
 
   useEffect(() => {
     const fetchCompanies = async () => {
@@ -51,108 +47,23 @@ const CompanyFilter: React.FC<CompanyFilterProps> = ({
     setSelectedCompany(foundCompany || null);
   }, [companyId, companies]);
 
-  const filterOptions = (
-    options: Company[],
-    state: FilterOptionsState<Company>
-  ) => {
-    return defaultFilterOptions(options, state).slice(0, 10);
-  };
-
-  const handleCompanyChange = (
-    _event: React.ChangeEvent<{}>,
-    newValue: Company | null
-  ) => {
-    setSelectedCompany(newValue);
-    setCompany(newValue?.companyId || null);
-  };
+  const handleCompanyChange = (value: string) => {
+    const company = companies.find((c) => c.companyName === value);
+    setSelectedCompany(company || null); // Set to null if company is undefined
+    setCompany(company?.companyId || null);
+  };  
 
   return (
-    <div className="flex items-center border-b border-teal-500 py-2">
+    <Box style={{ padding: '0.5rem 0' }}>
       <Autocomplete
-        id="field2"
-        forcePopupIcon={false}
-        sx={{
-          width: "100%",
-          "& .MuiInputBase-root": {
-            padding: "0",
-          },
-        }}
-        value={selectedCompany}
+        value={selectedCompany?.companyName || ''}
         onChange={handleCompanyChange}
-        options={companies}
-        filterOptions={filterOptions}
-        autoHighlight
-        getOptionLabel={(option) => option.companyName}
-        renderOption={(props, option) => (
-          <Box
-            component="li"
-            {...props}
-            key={option.companyId}
-          >
-            {option.companyName}
-          </Box>
-        )}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            placeholder="Company"
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                padding: "0",
-                "& fieldset": {
-                  borderColor: "transparent",
-                },
-                "&:hover fieldset": {
-                  borderColor: "transparent",
-                },
-                "&.Mui-focused fieldset": {
-                  borderColor: "transparent",
-                },
-                "& .MuiAutocomplete-input": {
-                  padding: "4px 8px",
-                  color: "#E6E6E6",
-                  "&::placeholder": {
-                    color: "#9CA3AF",
-                    opacity: 1,
-                  },
-                },
-              },
-              "& .MuiAutocomplete-clearIndicator": {
-                color: "#E6E6E6",
-              },
-            }}
-            inputProps={{
-              ...params.inputProps,
-              autoComplete: "new-password",
-            }}
-          />
-        )}
-        ListboxProps={{
-          sx: {
-            maxHeight: 350,
-            padding: '5px',
-            "& .MuiAutocomplete-option": {
-              "&:hover": {
-                backgroundColor: "#212121",
-              },
-            },
-          },
-        }}
-        PopperComponent={(props) => (
-          <Popper {...props}/>
-        )}
-        PaperComponent={(props) => (
-          <Paper
-            {...props}
-            style={{
-              backgroundColor: "#101010",
-              color: "#E6E6E6",
-              border: "1px solid gray",
-            }}
-          />
-        )}
+        data={companies.map((company) => company.companyName)}
+        placeholder="Company"
+        limit={10} // Assuming you want to limit the number of suggestions
+        // Add more Mantine-specific props as needed
       />
-    </div>
+    </Box>
   );
 };
 
