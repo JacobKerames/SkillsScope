@@ -84,7 +84,7 @@ const BarChart = ({ results }: BarChartProps) => {
         .attr("x", 2)
         .attr("text-anchor", "start") // Aligns the text to the start of the bar
         .text((d) => d.resultName)
-        .attr("fill", "#FFF")
+        .attr("fill", "#E6E6E6")
         .attr("font-size", "14px");
 
       // Add percentage labels inside bars
@@ -98,7 +98,7 @@ const BarChart = ({ results }: BarChartProps) => {
         .attr("y", (d) => (yScale(d.resultName) ?? 0) + barHeight / 2 + 5) // Center the label vertically
         .text((d) => `${d.percentage.toFixed(2)}%`) // Display the percentage
         .attr("text-anchor", "end") // Right-align the text with the end of the bar
-        .attr("fill", "#FFF") // Set the text color to white for visibility
+        .attr("fill", "#E6E6E6") // Set the text color to white for visibility
         .attr("font-size", "15px");
     }
   }, [chartHeight, containerWidth, results]);

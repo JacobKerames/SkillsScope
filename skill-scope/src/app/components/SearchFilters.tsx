@@ -95,7 +95,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
       {isAnyFilterSet && (
         <div className="flex justify-center pt-2">
           <button
-            className="text-sm py-1 px-2 rounded border-4 text-white bg-teal-500 border-teal-500 hover:bg-teal-700 hover:border-teal-700"
+            className="text-sm py-1 px-2 rounded border-4 text-white bg-teal-600 border-teal-600 hover:bg-teal-700 hover:border-teal-700"
             type="button"
             onClick={handleResetFilters}
           >

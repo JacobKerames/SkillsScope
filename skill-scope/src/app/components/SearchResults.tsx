@@ -135,7 +135,7 @@ const SearchResults = () => {
     if (results.length === 0) {
       return (
         <div className="container mb-20 mx-auto flex flex-col justify-center items-center px-6">
-          <p className="text-xl">
+          <p className="text-xl text-neutral-200">
             No {activeTab} found for{" "}
             {title &&
               title
@@ -157,7 +157,7 @@ const SearchResults = () => {
         style={{ maxWidth: "800px" }}
       >
         <ResultsTypeButtons activeTab={activeTab} setActiveTab={setActiveTab} />
-        <p className="text-xl text-left">
+        <p className="text-xl text-left text-neutral-200">
           Top {activeTab} for{" "}
           {title &&
             title

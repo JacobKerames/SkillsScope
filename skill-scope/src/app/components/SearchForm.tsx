@@ -56,7 +56,7 @@ const SearchForm: React.FC<SearchFormProps> = ({
   return (
     <>
       <form onSubmit={handleSearch} className="w-full max-w-lg">
-        <div className="flex items-center border-b border-teal-500 py-2 gap-4">
+        <div className="flex items-center border-b border-teal-600 py-2 gap-4">
           <input
             className="appearance-none bg-transparent border-none w-full text-white mr-3 py-1 px-2 leading-tight focus:outline-none"
             type="text"
@@ -66,7 +66,7 @@ const SearchForm: React.FC<SearchFormProps> = ({
             onChange={handleInputChange}
           />
           <button
-            className="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded"
+            className="flex-shrink-0 bg-teal-600 hover:bg-teal-700 border-teal-600 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded"
             type="submit"
           >
             Search
@@ -75,8 +75,8 @@ const SearchForm: React.FC<SearchFormProps> = ({
             <button
               className={`flex items-center justify-center text-sm py-1 px-2 rounded border-4 text-white ${
                 showFilters
-                  ? "bg-teal-700 border-teal-700 hover:bg-teal-500 hover:border-teal-500"
-                  : "bg-teal-500 border-teal-500 hover:bg-teal-700 hover:border-teal-700"
+                  ? "bg-teal-700 border-teal-700 hover:bg-teal-600 hover:border-teal-600"
+                  : "bg-teal-600 border-teal-600 hover:bg-teal-700 hover:border-teal-700"
               }`}
               type="button"
               onClick={handleFilters}
