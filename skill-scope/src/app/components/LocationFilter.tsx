@@ -1,8 +1,5 @@
 import { useState, useEffect } from "react";
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
-import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
-import { FilterOptionsState, Paper, Popper } from "@mui/material";
+import { Autocomplete, Box, TextInput } from "@mantine/core";
 
 interface City {
   cityId: number;
@@ -48,7 +45,6 @@ const LocationFilter: React.FC<LocationFilterProps> = ({
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(
     null
   );
-  const defaultFilterOptions = createFilterOptions<Location>();
 
   useEffect(() => {
     const fetchLocations = async () => {
@@ -80,17 +76,9 @@ const LocationFilter: React.FC<LocationFilterProps> = ({
     setSelectedLocation(foundLocation || null);
   }, [cityId, stateId, countryId, locations]);
 
-  const isOptionEqualToValue = (option: Location, value: Location | null) => {
-    return (
-      option.city?.cityId === value?.city?.cityId &&
-      option.state?.stateId === value?.state?.stateId &&
-      option.country.countryId === value?.country.countryId
-    );
-  };
-
   const getLocationLabel = (location: Location): string => {
-    if (location.city) {
-      return `${location.city.cityName}, ${location.state?.stateName}, ${location.country.countryName}`;
+    if (location.city && location.state) {
+      return `${location.city.cityName}, ${location.state.stateName}, ${location.country.countryName}`;
     } else if (location.state) {
       return `${location.state.stateName}, ${location.country.countryName}`;
     } else {
@@ -98,15 +86,15 @@ const LocationFilter: React.FC<LocationFilterProps> = ({
     }
   };
 
-  const filterOptions = (
-    options: Location[],
-    state: FilterOptionsState<Location>
-  ) => {
-    return defaultFilterOptions(options, state).slice(0, 10);
-  };
+  const uniqueLocations = locations.reduce<Location[]>((unique, loc) => {
+    const label = getLocationLabel(loc);
+    if (!unique.some(u => getLocationLabel(u) === label)) {
+      unique.push(loc);
+    }
+    return unique;
+  }, []);
 
   const handleLocationChange = (
-    _event: React.ChangeEvent<{}>,
     newValue: Location | null
   ) => {
     const cityId = newValue?.city?.cityId || null;
@@ -120,88 +108,20 @@ const LocationFilter: React.FC<LocationFilterProps> = ({
     <div className="flex items-center border-b border-teal-500 py-2">
       <Autocomplete
         id="field1"
-        forcePopupIcon={false}
-        sx={{
-          width: "100%",
-          "& .MuiInputBase-root": {
-            padding: "0",
-          },
+        style={{ width: "100%" }}
+        value={selectedLocation ? getLocationLabel(selectedLocation) : ''}
+        onChange={(label) => {
+          // Find the Location object that matches the selected label
+          const selectedLocation = locations.find(loc => 
+            getLocationLabel(loc) === label
+          );
+      
+          // If a location is found, pass it to handleLocationChange, otherwise pass null
+          handleLocationChange(selectedLocation || null);
         }}
-        value={selectedLocation}
-        onChange={handleLocationChange}
-        options={locations}
-        filterOptions={filterOptions}
-        autoHighlight
-        isOptionEqualToValue={isOptionEqualToValue}
-        getOptionLabel={(option) => getLocationLabel(option)}
-        renderOption={(props, option) => (
-          <Box
-            component="li"
-            {...props}
-            key={`${option.city?.cityId}-${option.state?.stateId}-${option.country.countryId}`}
-          >
-            {getLocationLabel(option)}
-          </Box>
-        )}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            placeholder="City, State, or Country"
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                padding: "0",
-                "& fieldset": {
-                  borderColor: "transparent",
-                },
-                "&:hover fieldset": {
-                  borderColor: "transparent",
-                },
-                "&.Mui-focused fieldset": {
-                  borderColor: "transparent",
-                },
-                "& .MuiAutocomplete-input": {
-                  padding: "4px 8px",
-                  color: "#E6E6E6",
-                  "&::placeholder": {
-                    color: "#9CA3AF",
-                    opacity: 1,
-                  },
-                },
-              },
-              "& .MuiAutocomplete-clearIndicator": {
-                color: "#E6E6E6",
-              },
-            }}
-            inputProps={{
-              ...params.inputProps,
-              autoComplete: "new-password",
-            }}
-          />
-        )}
-        ListboxProps={{
-          sx: {
-            maxHeight: 350,
-            padding: '5px',
-            "& .MuiAutocomplete-option": {
-              "&:hover": {
-                backgroundColor: "#212121",
-              },
-            },
-          },
-        }}
-        PopperComponent={(props) => (
-          <Popper {...props} style={{ width: "300px" }} />
-        )}
-        PaperComponent={(props) => (
-          <Paper
-            {...props}
-            style={{
-              backgroundColor: "#101010",
-              color: "#E6E6E6",
-              border: "1px solid gray",
-            }}
-          />
-        )}
+        data={uniqueLocations.map(getLocationLabel)}
+        placeholder="City, State, or Country"
+        // Add more Mantine specific props as needed
       />
     </div>
   );
