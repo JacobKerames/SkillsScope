@@ -6,8 +6,8 @@ import BarChart from "./BarChart";
 import ResultsTypeButtons from "./ResultsTypeButtons";
 import CircularProgress from "@mui/material/CircularProgress";
 
-export type Skill = {
-  skillName: string;
+export type Results = {
+  resultName: string;
   percentage: number;
 };
 
@@ -17,7 +17,8 @@ const getFirstParamValue = (
 ) => (Array.isArray(param) ? param[0] : param || defaultValue);
 
 const SearchResults = () => {
-  const [skills, setSkills] = useState<Skill[] | null>(null);
+  const [results, setResults] = useState<Results[] | null>(null);
+  const [activeTab, setActiveTab] = useState("skills");
   const [error, setError] = useState<string | null>(null);
   const searchParams = useSearchParams();
 
@@ -30,7 +31,7 @@ const SearchResults = () => {
   const level = getFirstParamValue(searchParams.get("level"));
 
   useEffect(() => {
-    setSkills(null);
+    setResults(null);
     setError(null);
     const controller = new AbortController();
 
@@ -50,19 +51,19 @@ const SearchResults = () => {
       ([key, value]) => key === "keyword" || value.trim() !== ""
     );
     if (!hasValidParams) {
-      setSkills(null);
+      setResults(null);
       return;
     }
 
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:5277/search/skills?${queryParams.toString()}`,
+          `http://localhost:5277/search/${activeTab}?${queryParams.toString()}`,
           { signal: controller.signal }
         );
         if (!response.ok) throw new Error("Network response was not ok");
         const data = await response.json();
-        setSkills(data);
+        setResults(data);
       } catch (error) {
         if (error instanceof Error && error.name !== "AbortError") {
           console.error("Error fetching search results:", error);
@@ -73,7 +74,7 @@ const SearchResults = () => {
 
     fetchData();
     return () => controller.abort();
-  }, [title, timeFrame, companyId, cityId, stateId, countryId, level]);
+  }, [activeTab, title, timeFrame, companyId, cityId, stateId, countryId, level]);
 
   const generateResultsLabel = () => {
     let label = "";
@@ -114,8 +115,8 @@ const SearchResults = () => {
     }
   };
 
-  const renderSkillsContent = () => {
-    if (skills === null) {
+  const renderResultsContent = () => {
+    if (results === null) {
       return (
         <div className="container mb-20 mx-auto flex flex-col justify-center items-center px-6 py-12">
           <CircularProgress />
@@ -131,11 +132,11 @@ const SearchResults = () => {
       );
     }
 
-    if (skills.length === 0) {
+    if (results.length === 0) {
       return (
         <div className="container mb-20 mx-auto flex flex-col justify-center items-center px-6">
           <p className="text-xl">
-            No skills found for{" "}
+            No {activeTab} found for{" "}
             {title &&
               title
                 .split(" ")
@@ -155,9 +156,9 @@ const SearchResults = () => {
         className="container mx-auto flex flex-col p-6"
         style={{ maxWidth: "800px" }}
       >
-        <ResultsTypeButtons />
+        <ResultsTypeButtons activeTab={activeTab} setActiveTab={setActiveTab} />
         <p className="text-xl text-left">
-          Top skills for{" "}
+          Top {activeTab} for{" "}
           {title &&
             title
               .split(" ")
@@ -169,11 +170,11 @@ const SearchResults = () => {
         <p className="text-lg text-left text-gray-500">
           {generateResultsLabel()}
         </p>
-        <BarChart skills={skills} />
+        <BarChart results={results} />
       </div>
     );
   };
-  return <>{renderSkillsContent()}</>;
+  return <>{renderResultsContent()}</>;
 };
 
 export default SearchResults;
