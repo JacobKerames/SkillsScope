@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Autocomplete, Box, TextInput } from "@mantine/core";
+import { useRef, useState } from "react";
+import { Combobox, Loader, TextInput, useCombobox } from "@mantine/core";
 
 interface City {
   cityId: number;
@@ -41,90 +41,108 @@ const LocationFilter: React.FC<LocationFilterProps> = ({
   countryId,
   setLocation,
 }) => {
-  const [locations, setLocations] = useState<Location[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState<Location | null>(
-    null
-  );
+  const [loading, setLoading] = useState(false);
+	const [data, setData] = useState<Location[] | null>(null);
+	const [value, setValue] = useState("");
+	const [empty, setEmpty] = useState(false);
+	const abortController = useRef<AbortController>();
 
-  useEffect(() => {
-    const fetchLocations = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:5277/location/locations"
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch locations");
-        }
-        const data: Location[] = await response.json();
-        setLocations(data);
-      } catch (error) {
-        console.error("Error fetching locations:", error);
-        // Handle error state as needed
+  async function getAsyncData(searchQuery: string, signal: AbortSignal) {
+    try {
+      const response = await fetch(
+        `http://localhost:5277/location/locations?query=${searchQuery}`, { signal });
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
       }
-    };
+      return await response.json();
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name !== 'AbortError') {
+        console.error("Fetch error:", error);
+      }
+    }
+  }
+	
+	const combobox = useCombobox({
+		onDropdownClose: () => combobox.resetSelectedOption(),
+	});
 
-    fetchLocations();
-  }, []);
+	const fetchOptions = (query: string) => {
+		abortController.current?.abort();
+		abortController.current = new AbortController();
+		setLoading(true);
 
-  useEffect(() => {
-    const foundLocation = locations.find(
-      (loc) =>
-        loc.city?.cityId === cityId &&
-        loc.state?.stateId === stateId &&
-        loc.country.countryId === countryId
+		getAsyncData(query || 'united states', abortController.current.signal)
+			.then((result) => {
+				setData(result);
+				setLoading(false);
+				setEmpty(result.length === 0);
+				abortController.current = undefined;
+			})
+			.catch(() => {});
+	};
+
+  const locationToString = (location: Location) => {
+    const parts = [];
+    if (location.city) {
+      parts.push(location.city.cityName);
+    }
+    if (location.state) {
+      parts.push(location.state.stateName);
+    }
+    parts.push(location.country.countryName);
+    return parts.join(', ');
+  };
+
+	const options = (data || []).map((location) => {
+    const locationString = locationToString(location);
+    const key = `${location.city?.cityId}-${location.state?.stateId}-${location.country.countryId}`;
+  
+    return (
+      <Combobox.Option value={locationString} key={key}>
+        {locationString}
+      </Combobox.Option>
     );
-    setSelectedLocation(foundLocation || null);
-  }, [cityId, stateId, countryId, locations]);
+  });
 
-  const getLocationLabel = (location: Location): string => {
-    if (location.city && location.state) {
-      return `${location.city.cityName}, ${location.state.stateName}, ${location.country.countryName}`;
-    } else if (location.state) {
-      return `${location.state.stateName}, ${location.country.countryName}`;
-    } else {
-      return location.country.countryName;
-    }
-  };
+	return (
+		<Combobox
+			onOptionSubmit={(optionValue) => {
+				setValue(optionValue);
+				combobox.closeDropdown();
+			}}
+			withinPortal={false}
+			store={combobox}
+		>
+			<Combobox.Target>
+				<TextInput
+					placeholder="City, State, or Country"
+					value={value}
+					onChange={(event) => {
+						setValue(event.currentTarget.value);
+						fetchOptions(event.currentTarget.value);
+						combobox.resetSelectedOption();
+						combobox.openDropdown();
+					}}
+					onClick={() => combobox.openDropdown()}
+					onFocus={() => {
+						combobox.openDropdown();
+						if (data === null) {
+							fetchOptions(value);
+						}
+					}}
+					onBlur={() => combobox.closeDropdown()}
+					rightSection={loading && <Loader size={18} />}
+				/>
+			</Combobox.Target>
 
-  const uniqueLocations = locations.reduce<Location[]>((unique, loc) => {
-    const label = getLocationLabel(loc);
-    if (!unique.some(u => getLocationLabel(u) === label)) {
-      unique.push(loc);
-    }
-    return unique;
-  }, []);
-
-  const handleLocationChange = (
-    newValue: Location | null
-  ) => {
-    const cityId = newValue?.city?.cityId || null;
-    const stateId = newValue?.state?.stateId || null;
-    const countryId = newValue?.country?.countryId || null;
-    setSelectedLocation(newValue);
-    setLocation(cityId, stateId, countryId);
-  };
-
-  return (
-    <div className="flex items-center border-b border-teal-500 py-2">
-      <Autocomplete
-        id="field1"
-        style={{ width: "100%" }}
-        value={selectedLocation ? getLocationLabel(selectedLocation) : ''}
-        onChange={(label) => {
-          // Find the Location object that matches the selected label
-          const selectedLocation = locations.find(loc => 
-            getLocationLabel(loc) === label
-          );
-      
-          // If a location is found, pass it to handleLocationChange, otherwise pass null
-          handleLocationChange(selectedLocation || null);
-        }}
-        data={uniqueLocations.map(getLocationLabel)}
-        placeholder="City, State, or Country"
-        // Add more Mantine specific props as needed
-      />
-    </div>
-  );
+			<Combobox.Dropdown hidden={data === null}>
+				<Combobox.Options>
+					{options}
+					{empty && <Combobox.Empty>No results found</Combobox.Empty>}
+				</Combobox.Options>
+			</Combobox.Dropdown>
+		</Combobox>
+	);
 };
 
 export default LocationFilter;

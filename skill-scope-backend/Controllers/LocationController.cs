@@ -9,10 +9,17 @@ public class LocationController(ILocationRepository locationRepository) : Contro
 {
     private readonly ILocationRepository _locationRepository = locationRepository;
 
-    [HttpGet("locations")]
-    public async Task<IActionResult> SearchLocations()
+    [HttpGet("all-locations")]
+    public async Task<IActionResult> SearchAllLocations()
     {
         var locations = await _locationRepository.GetAllLocationsAsync();
+        return Ok(locations);
+    }
+
+    [HttpGet("locations")]
+    public async Task<IActionResult> SearchLocations([FromQuery] string query)
+    {
+        var locations = await _locationRepository.GetFilteredLocationsAsync(query);
         return Ok(locations);
     }
 }
