@@ -1,31 +1,37 @@
+import { Box, Tabs } from "@mantine/core";
+
 interface ResultsTypeButtonsProps {
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
+  activeTab: string | null;
+  setActiveTab: (tab: string | null) => void;
 }
 
 const ResultsTypeButtons: React.FC<ResultsTypeButtonsProps> = ({ activeTab, setActiveTab }) => {
-  const tabs = [
-    { name: "Skills", value: "skills" },
-    { name: "Education", value: "education" },
-    { name: "Experience", value: "experience" },
-  ];
+
+  const tabStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
+    fontSize: '1em',
+    fontWeight: 'bold',
+    fontColor: '#191D32',
+  };
 
   return (
-    <div className="grid grid-cols-3 mb-12">
-      {tabs.map((tab) => (
-        <button
-          key={tab.value}
-          onClick={() => setActiveTab(tab.value)}
-          className={`py-2 text-md font-medium ${
-            activeTab === tab.value
-              ? "border-b-2 border-red-500 text-neutral-100"
-              : "text-gray-400 hover:text-gray-300"
-          }`}
-        >
-          {tab.name}
-        </button>
-      ))}
-    </div>
+    <Box
+      style={{ 
+        marginTop: '4em',
+        marginBottom: '2em'
+      }}
+    >
+      <Tabs color="#191D32" value={activeTab} onChange={setActiveTab}>
+        <Tabs.List grow>
+          <Tabs.Tab value="skills" style={tabStyle}>Skills</Tabs.Tab>
+          <Tabs.Tab value="education" style={tabStyle}>Education</Tabs.Tab>
+          <Tabs.Tab value="experience" style={tabStyle}>Experience</Tabs.Tab>
+        </Tabs.List>
+      </Tabs>
+    </Box>
   );
 };
 

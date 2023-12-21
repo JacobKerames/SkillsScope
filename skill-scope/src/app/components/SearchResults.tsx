@@ -16,7 +16,7 @@ const getFirstParamValue = (
 
 const SearchResults = () => {
   const [results, setResults] = useState<Results[] | null>(null);
-  const [activeTab, setActiveTab] = useState("skills");
+  const [activeTab, setActiveTab] = useState<string | null>("skills");
   const [error, setError] = useState<string | null>(null);
   const searchParams = useSearchParams();
 
@@ -173,7 +173,7 @@ const SearchResults = () => {
               .join(" ")}{" "}
           jobs
         </Title>
-        <Text size="lg" color="gray-500">
+        <Text size="lg" c="gray-500" style={{ marginBottom: "1em" }}>
           {generateResultsLabel()}
         </Text>
         <BarChart results={results} />
