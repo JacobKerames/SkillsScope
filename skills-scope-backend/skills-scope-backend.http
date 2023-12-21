@@ -1,0 +1,6 @@
+@skills_scope_backend_HostAddress = http://localhost:5277
+
+GET {{skills_scope_backend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
