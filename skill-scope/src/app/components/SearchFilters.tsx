@@ -43,6 +43,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
     stateId: number | null,
     countryId: number | null
   ) => {
+    console.log("handleLocationChange");
     const updatedFilters = {
       ...localFilters,
       cityId,
