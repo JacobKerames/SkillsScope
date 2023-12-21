@@ -46,6 +46,9 @@ const LocationFilter: React.FC<LocationFilterProps> = ({
   const [value, setValue] = useState("");
   const [empty, setEmpty] = useState(false);
   const abortController = useRef<AbortController>();
+  const combobox = useCombobox({
+    onDropdownClose: () => combobox.resetSelectedOption(),
+  });
 
   async function getAsyncData(searchQuery: string, signal: AbortSignal) {
     try {
@@ -63,10 +66,6 @@ const LocationFilter: React.FC<LocationFilterProps> = ({
       }
     }
   }
-
-  const combobox = useCombobox({
-    onDropdownClose: () => combobox.resetSelectedOption(),
-  });
 
   const fetchOptions = (query: string) => {
     abortController.current?.abort();
@@ -109,7 +108,7 @@ const LocationFilter: React.FC<LocationFilterProps> = ({
   useEffect(() => {
     if (cityId === null && stateId === null && countryId === null) {
       setValue("");
-      fetchOptions(value);
+      fetchOptions("united states");
     }
   }, [cityId, stateId, countryId]);
 

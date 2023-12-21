@@ -9,10 +9,17 @@ public class CompanyController(ICompanyRepository companyRepository) : Controlle
 {
     private readonly ICompanyRepository _companyRepository = companyRepository;
 
-    [HttpGet("companies")]
+    [HttpGet("all-companies")]
     public async Task<IActionResult> SearchCompanies()
     {
         var companies = await _companyRepository.GetAllCompaniesAsync();
+        return Ok(companies);
+    }
+
+    [HttpGet("companies")]
+    public async Task<IActionResult> SearchCompanies([FromQuery] string query = "")
+    {
+        var companies = await _companyRepository.GetFilteredCompaniesAsync(query);
         return Ok(companies);
     }
 }

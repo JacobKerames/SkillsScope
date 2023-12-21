@@ -9,6 +9,41 @@ namespace skill_scope_backend.Repositories
   {
     private readonly string? _connectionString = configuration.GetConnectionString("DefaultConnection");
 
+    public async Task<IEnumerable<Company>> GetFilteredCompaniesAsync(string query)
+    {
+      var sql = @"
+        SELECT company_id, company_name
+        FROM companies";
+
+      if (!string.IsNullOrEmpty(query))
+			{
+				sql += @"
+					WHERE 
+						to_tsvector('english', companies.company_name) @@ plainto_tsquery('english', @Query)";
+			}
+
+      sql += @"
+        ORDER BY 
+					companies.company_name ASC
+        LIMIT 10;";
+
+      using IDbConnection db = new NpgsqlConnection(_connectionString);
+      var companyData = await db.QueryAsync(sql, new { Query = query });
+
+      var companies = new List<Company>();
+      foreach (var item in companyData)
+      {
+        var company = new Company
+        {
+          CompanyId = item.company_id,
+          CompanyName = item.company_name
+        };
+        companies.Add(company);
+      }
+
+      return companies;
+    }
+
     public async Task<IEnumerable<Company>> GetAllCompaniesAsync()
     {
       var sql = @"

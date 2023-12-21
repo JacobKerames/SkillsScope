@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Autocomplete, Box } from '@mantine/core';
+import { useEffect, useRef, useState } from "react";
+import { Combobox, Loader, TextInput, useCombobox } from "@mantine/core";
 
 interface Company {
   companyId: number;
@@ -15,55 +15,109 @@ const CompanyFilter: React.FC<CompanyFilterProps> = ({
   companyId,
   setCompany,
 }) => {
-  const [companies, setCompanies] = useState<Company[]>([]);
-  const [selectedCompany, setSelectedCompany] = useState<Company | null>(
-    null
-  );
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<Company[] | null>(null);
+  const [value, setValue] = useState("");
+  const [empty, setEmpty] = useState(false);
+  const abortController = useRef<AbortController>();
+	const combobox = useCombobox({
+    onDropdownClose: () => combobox.resetSelectedOption(),
+  });
 
-  useEffect(() => {
-    const fetchCompanies = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:5277/company/companies"
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch companies");
-        }
-        const data: Company[] = await response.json();
-        setCompanies(data);
-      } catch (error) {
-        console.error("Error fetching companies:", error);
-        // Handle error state as needed
+  async function getAsyncData(searchQuery: string, signal: AbortSignal) {
+    try {
+      const response = await fetch(
+        `http://localhost:5277/company/companies?query=${searchQuery}`,
+        { signal }
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
       }
-    };
+      return await response.json();
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name !== "AbortError") {
+        console.error("Fetch error:", error);
+      }
+    }
+  }
 
-    fetchCompanies();
-  }, []);
+  const fetchOptions = (query: string) => {
+    abortController.current?.abort();
+    abortController.current = new AbortController();
+    setLoading(true);
+
+    getAsyncData(query, abortController.current.signal)
+      .then((result) => {
+        setData(result);
+        setLoading(false);
+        setEmpty(result.length === 0);
+        abortController.current = undefined;
+      })
+      .catch(() => {});
+  };
+
+  const options = (data || []).map((company) => {
+    const key = `${company.companyId}`;
+    return (
+      <Combobox.Option value={company.companyName} key={key}>
+        {company.companyName}
+      </Combobox.Option>
+    );
+  });
 
   useEffect(() => {
-    const foundCompany = companies.find(
-      (company) => company.companyId === companyId
-    );
-    setSelectedCompany(foundCompany || null);
-  }, [companyId, companies]);
-
-  const handleCompanyChange = (value: string) => {
-    const company = companies.find((c) => c.companyName === value);
-    setSelectedCompany(company || null); // Set to null if company is undefined
-    setCompany(company?.companyId || null);
-  };  
+    if (companyId === null) {
+      setValue("");
+      fetchOptions("");
+    }
+  }, [companyId]);
 
   return (
-    <Box style={{ padding: '0.5rem 0' }}>
-      <Autocomplete
-        value={selectedCompany?.companyName || ''}
-        onChange={handleCompanyChange}
-        data={companies.map((company) => company.companyName)}
-        placeholder="Company"
-        limit={10} // Assuming you want to limit the number of suggestions
-        // Add more Mantine-specific props as needed
-      />
-    </Box>
+    <Combobox
+      onOptionSubmit={(optionValue) => {
+        setValue(optionValue);
+        const selectedCompany = data?.find(
+          (company) => company.companyName === optionValue
+        );
+        if (selectedCompany) {
+          setCompany(
+            selectedCompany.companyId
+          );
+        }
+        combobox.closeDropdown();
+      }}
+      withinPortal={false}
+      store={combobox}
+    >
+      <Combobox.Target>
+        <TextInput
+          placeholder="Company"
+          value={value}
+          onChange={(event) => {
+            setValue(event.currentTarget.value);
+            fetchOptions(event.currentTarget.value);
+            combobox.resetSelectedOption();
+            combobox.openDropdown();
+          }}
+          onClick={() => combobox.openDropdown()}
+          onFocus={() => {
+            combobox.openDropdown();
+            if (data === null) {
+              fetchOptions(value);
+            }
+          }}
+          onBlur={() => combobox.closeDropdown()}
+          rightSection={loading && <Loader size={18} />}
+        />
+      </Combobox.Target>
+
+      <Combobox.Dropdown hidden={data === null}>
+        <Combobox.Options>
+          {options}
+          {empty && <Combobox.Empty>No results found</Combobox.Empty>}
+        </Combobox.Options>
+      </Combobox.Dropdown>
+    </Combobox>
   );
 };
 
