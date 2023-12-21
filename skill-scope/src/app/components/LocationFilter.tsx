@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Combobox, Loader, TextInput, useCombobox } from "@mantine/core";
+import { CloseButton, Combobox, TextInput, useCombobox } from "@mantine/core";
 
 interface City {
   cityId: number;
@@ -41,9 +41,9 @@ const LocationFilter: React.FC<LocationFilterProps> = ({
   countryId,
   setLocation,
 }) => {
-  const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Location[] | null>(null);
   const [value, setValue] = useState("");
+  const [fieldSet, setFieldSet] = useState(false);
   const [empty, setEmpty] = useState(false);
   const abortController = useRef<AbortController>();
   const combobox = useCombobox({
@@ -70,12 +70,10 @@ const LocationFilter: React.FC<LocationFilterProps> = ({
   const fetchOptions = (query: string) => {
     abortController.current?.abort();
     abortController.current = new AbortController();
-    setLoading(true);
 
     getAsyncData(query || "united states", abortController.current.signal)
       .then((result) => {
         setData(result);
-        setLoading(false);
         setEmpty(result.length === 0);
         abortController.current = undefined;
       })
@@ -108,6 +106,7 @@ const LocationFilter: React.FC<LocationFilterProps> = ({
   useEffect(() => {
     if (cityId === null && stateId === null && countryId === null) {
       setValue("");
+      setFieldSet(false);
       fetchOptions("united states");
     }
   }, [cityId, stateId, countryId]);
@@ -125,6 +124,7 @@ const LocationFilter: React.FC<LocationFilterProps> = ({
             selectedLocation.state?.stateId || null,
             selectedLocation.country.countryId
           );
+          setFieldSet(true);
         }
         combobox.closeDropdown();
       }}
@@ -148,8 +148,28 @@ const LocationFilter: React.FC<LocationFilterProps> = ({
               fetchOptions(value);
             }
           }}
-          onBlur={() => combobox.closeDropdown()}
-          rightSection={loading && <Loader size={18} />}
+          onBlur={() => {
+            if (!fieldSet) {
+              setLocation(null, null, null);
+              setValue("");
+              fetchOptions("");
+            }
+            combobox.closeDropdown();
+          }}
+          rightSection={
+            value !== "" && (
+              <CloseButton
+                size="sm"
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => {
+                  setValue("");
+                  setFieldSet(false);
+                  setLocation(null, null, null);
+                }}
+                aria-label="Clear location filter"
+              />
+            )
+          }
         />
       </Combobox.Target>
 

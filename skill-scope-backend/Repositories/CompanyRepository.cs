@@ -19,7 +19,7 @@ namespace skill_scope_backend.Repositories
 			{
 				sql += @"
 					WHERE 
-						to_tsvector('english', companies.company_name) @@ plainto_tsquery('english', @Query)";
+						companies.company_name ILIKE @QueryPattern";
 			}
 
       sql += @"
@@ -28,7 +28,8 @@ namespace skill_scope_backend.Repositories
         LIMIT 10;";
 
       using IDbConnection db = new NpgsqlConnection(_connectionString);
-      var companyData = await db.QueryAsync(sql, new { Query = query });
+      var queryPattern = $"%{query}%";
+      var companyData = await db.QueryAsync(sql, new { QueryPattern = queryPattern });
 
       var companies = new List<Company>();
       foreach (var item in companyData)

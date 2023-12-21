@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { Combobox, Loader, TextInput, useCombobox } from "@mantine/core";
+import { CloseButton, Combobox, TextInput, useCombobox } from "@mantine/core";
 
 interface Company {
   companyId: number;
-	companyName: string;
+  companyName: string;
 }
 
 interface CompanyFilterProps {
@@ -15,12 +15,12 @@ const CompanyFilter: React.FC<CompanyFilterProps> = ({
   companyId,
   setCompany,
 }) => {
-  const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Company[] | null>(null);
   const [value, setValue] = useState("");
+  const [fieldSet, setFieldSet] = useState(false);
   const [empty, setEmpty] = useState(false);
   const abortController = useRef<AbortController>();
-	const combobox = useCombobox({
+  const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
 
@@ -44,12 +44,10 @@ const CompanyFilter: React.FC<CompanyFilterProps> = ({
   const fetchOptions = (query: string) => {
     abortController.current?.abort();
     abortController.current = new AbortController();
-    setLoading(true);
 
     getAsyncData(query, abortController.current.signal)
       .then((result) => {
         setData(result);
-        setLoading(false);
         setEmpty(result.length === 0);
         abortController.current = undefined;
       })
@@ -68,6 +66,7 @@ const CompanyFilter: React.FC<CompanyFilterProps> = ({
   useEffect(() => {
     if (companyId === null) {
       setValue("");
+      setFieldSet(false);
       fetchOptions("");
     }
   }, [companyId]);
@@ -80,9 +79,8 @@ const CompanyFilter: React.FC<CompanyFilterProps> = ({
           (company) => company.companyName === optionValue
         );
         if (selectedCompany) {
-          setCompany(
-            selectedCompany.companyId
-          );
+          setCompany(selectedCompany.companyId);
+          setFieldSet(true);
         }
         combobox.closeDropdown();
       }}
@@ -106,8 +104,28 @@ const CompanyFilter: React.FC<CompanyFilterProps> = ({
               fetchOptions(value);
             }
           }}
-          onBlur={() => combobox.closeDropdown()}
-          rightSection={loading && <Loader size={18} />}
+          onBlur={() => {
+            if (!fieldSet) {
+              setCompany(null);
+              setValue("");
+              fetchOptions("");
+            }
+            combobox.closeDropdown();
+          }}
+          rightSection={
+            value !== "" && (
+              <CloseButton
+                size="sm"
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => {
+                  setValue("");
+                  setFieldSet(false);
+                  setCompany(null);
+                }}
+                aria-label="Clear company filter"
+              />
+            )
+          }
         />
       </Combobox.Target>
 

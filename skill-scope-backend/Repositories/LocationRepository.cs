@@ -51,9 +51,9 @@ namespace skill_scope_backend.Repositories
 			{
 				sql += @"
 					WHERE 
-						to_tsvector('english', combined_locations.city_name) @@ plainto_tsquery('english', @Query) OR
-						to_tsvector('english', combined_locations.state_name) @@ plainto_tsquery('english', @Query) OR
-						to_tsvector('english', combined_locations.country_name) @@ plainto_tsquery('english', @Query)";
+						combined_locations.country_name ILIKE @QueryPattern OR
+						combined_locations.state_name || ' ' || combined_locations.country_name ILIKE @QueryPattern OR
+						combined_locations.city_name || ' ' || combined_locations.state_name ILIKE @QueryPattern";
 			}
 
 			sql += @"
@@ -66,7 +66,8 @@ namespace skill_scope_backend.Repositories
 				LIMIT 10;";
 
 			using IDbConnection db = new NpgsqlConnection(_connectionString);
-			var locationData = await db.QueryAsync(sql, new { Query = query });
+			var queryPattern = $"%{query}%";
+			var locationData = await db.QueryAsync(sql, new { QueryPattern = queryPattern });
 
 			var locations = new List<Location>();
 			foreach (var item in locationData)
@@ -81,7 +82,6 @@ namespace skill_scope_backend.Repositories
 			}
 			return locations;
 		}
-
 
 		public async Task<IEnumerable<Location>> GetAllLocationsAsync()
 		{
