@@ -6,7 +6,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: "AllowSpecificOrigins", policy =>
     {
-        policy.WithOrigins("http://localhost:3000")
+        policy.WithOrigins(
+                "http://localhost:3000", // Development origin
+                "https://skillsscope.azurewebsites.net" // Production origin
+            )
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -22,14 +25,13 @@ builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 
 var app = builder.Build();
 
+app.UseCors("AllowSpecificOrigins");
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowSpecificOrigins");
-
 app.MapControllers();
-
 app.Run();
