@@ -134,7 +134,7 @@ const SearchResults = () => {
     if (error) {
       return (
         <Center className="mb-20">
-          <Text color="red" size="xl">
+          <Text c="red" size="xl">
             {error}
           </Text>
         </Center>
@@ -144,7 +144,7 @@ const SearchResults = () => {
     if (results.length === 0) {
       return (
         <Center className="mb-20">
-          <Text size="xl" color="neutral-200">
+          <Text size="xl" c="neutral-200">
             No {activeTab} found for{" "}
             {title &&
               title
@@ -153,7 +153,7 @@ const SearchResults = () => {
                 .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
                 .join(" ")}
           </Text>
-          <Text size="lg" color="gray-500">
+          <Text size="lg" c="gray-500">
             {generateResultsLabel()}
           </Text>
         </Center>
