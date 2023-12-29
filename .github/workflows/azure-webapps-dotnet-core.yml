@@ -80,7 +80,9 @@ jobs:
           path: ${{env.DOTNET_ROOT}}/myapp
 
       - name: Copy Next.js build to deploy directory
-        run: cp -R ./skill-scope/.next/* ./deploy/frontend/
+        run: |
+          mkdir -p ./deploy/frontend
+          cp -R ./skill-scope/.next/* ./deploy/frontend/
       
       - name: Copy .NET build to deploy directory
         run: cp -R ./bin/Debug/net8.0/* ./deploy/backend/
