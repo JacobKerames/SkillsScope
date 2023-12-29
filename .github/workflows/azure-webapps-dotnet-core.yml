@@ -24,6 +24,8 @@ env:
   AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
   DOTNET_VERSION: '8.x'                 # set this to the .NET Core version to use
 
+  NODE_VERSION: '21.x'
+
 on:
   push:
     branches: [ "main" ]
@@ -38,6 +40,19 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Next.js dependencies
+        run: npm install
+        working-directory: ./skills-scope
+        
+      - name: Build Next.js frontend
+        run: npm run build
+        working-directory: ./skills-scope
 
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v2
@@ -64,6 +79,12 @@ jobs:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
 
+      - name: Copy Next.js build to deploy directory
+        run: cp -R ./skill-scope/.next/* ./deploy/frontend/
+      
+      - name: Copy .NET build to deploy directory
+        run: cp -R ./bin/Debug/net8.0/* ./deploy/backend/
+
   deploy:
     permissions:
       contents: none
@@ -85,4 +106,4 @@ jobs:
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+          package: ./deploy
