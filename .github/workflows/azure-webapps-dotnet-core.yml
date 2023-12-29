@@ -85,7 +85,7 @@ jobs:
           cp -R ./skills-scope/.next/* ./deploy/frontend/
       
       - name: Copy .NET build to deploy directory
-        run: cp -R ./bin/Debug/net8.0/* ./deploy/backend/
+        run: cp -R ./skills-scope-backend/bin/Debug/net8.0/* ./deploy/backend/
 
   deploy:
     permissions:
