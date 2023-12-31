@@ -19,11 +19,6 @@ jobs:
         with:
           submodules: true
           lfs: false
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '21.x'
           
       - name: Build And Deploy
         id: builddeploy
