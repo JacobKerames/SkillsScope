@@ -90,6 +90,9 @@ jobs:
           mkdir -p ./deploy/backend
           cp -R ./skills-scope-backend/build-output/* ./deploy/backend/
 
+      - name: List contents of deploy directory
+        run: ls -R ./deploy
+
   deploy:
     permissions:
       contents: none
