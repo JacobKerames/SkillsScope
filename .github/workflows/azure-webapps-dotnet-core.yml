@@ -68,7 +68,8 @@ jobs:
             ${{ runner.os }}-nuget-
 
       - name: Build with dotnet
-        run: dotnet build --configuration Release
+        run: dotnet build --configuration Release --output ./build-output
+        working-directory: ./skills-scope-backend
 
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
@@ -87,7 +88,7 @@ jobs:
       - name: Copy .NET build to deploy directory
         run: |
           mkdir -p ./deploy/backend
-          cp -R ./skills-scope-backend/bin/Debug/net8.0/* ./deploy/backend/
+          cp -R ./skills-scope-backend/build-output/* ./deploy/backend/
 
   deploy:
     permissions:
