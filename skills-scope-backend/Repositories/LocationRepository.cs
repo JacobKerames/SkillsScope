@@ -5,9 +5,23 @@ using skills_scope_backend.Models;
 
 namespace skills_scope_backend.Repositories
 {
-	public class LocationRepository(IConfiguration configuration) : ILocationRepository
+	public class LocationRepository : ILocationRepository
 	{
-		private readonly string? _connectionString = configuration.GetConnectionString("DefaultConnection");
+		private readonly string _connectionString;
+
+        public LocationRepository(IConfiguration configuration)
+        {
+            // Retrieve the connection string
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+            // Check for null and handle it appropriately
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new InvalidOperationException("Database connection string 'DefaultConnection' not found.");
+            }
+
+            _connectionString = connectionString;
+        }
 
 		public async Task<IEnumerable<Location>> GetFilteredLocationsAsync(string query)
 		{

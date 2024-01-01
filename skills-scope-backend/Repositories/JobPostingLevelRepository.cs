@@ -6,9 +6,23 @@ using skills_scope_backend.Repositories.Interfaces;
 
 namespace skills_scope_backend.Repositories
 {
-    public class JobPostingLevelRepository(string connectionString) : IJobPostingLevelRepository
+    public class JobPostingLevelRepository : IJobPostingLevelRepository
     {
-        private readonly string _connectionString = connectionString;
+        private readonly string _connectionString;
+
+        public JobPostingLevelRepository(IConfiguration configuration)
+        {
+            // Retrieve the connection string
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+            // Check for null and handle it appropriately
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new InvalidOperationException("Database connection string 'DefaultConnection' not found.");
+            }
+
+            _connectionString = connectionString;
+        }
 
         public async Task<IEnumerable<JobPostingLevel>> GetByJobPostingIdAsync(int jobPostingId)
         {

@@ -5,9 +5,23 @@ using skills_scope_backend.Models;
 
 namespace skills_scope_backend.Repositories
 {
-    public class CityRepository(string connectionString) : ICityRepository
+    public class CityRepository : ICityRepository
     {
-        private readonly string _connectionString = connectionString;
+        private readonly string _connectionString;
+
+        public CityRepository(IConfiguration configuration)
+        {
+            // Retrieve the connection string
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+            // Check for null and handle it appropriately
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new InvalidOperationException("Database connection string 'DefaultConnection' not found.");
+            }
+
+            _connectionString = connectionString;
+        }
 
         public async Task<City?> GetByIdAsync(int cityId)
         {

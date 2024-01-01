@@ -6,9 +6,23 @@ using skills_scope_backend.Repositories.Interfaces;
 
 namespace skills_scope_backend.Repositories
 {
-    public class EducationalFieldRepository(string connectionString) : IEducationalFieldRepository
+    public class EducationalFieldRepository : IEducationalFieldRepository
     {
-        private readonly string _connectionString = connectionString;
+        private readonly string _connectionString;
+
+        public EducationalFieldRepository(IConfiguration configuration)
+        {
+            // Retrieve the connection string
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+            // Check for null and handle it appropriately
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new InvalidOperationException("Database connection string 'DefaultConnection' not found.");
+            }
+
+            _connectionString = connectionString;
+        }
 
         public async Task<EducationalField?> GetByIdAsync(int educationalFieldId)
         {
