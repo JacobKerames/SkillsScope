@@ -24,9 +24,11 @@ jobs:
 
       - name: Build with dotnet
         run: dotnet build --configuration Release
+        working-directory: ./skills-scope-backend
 
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        working-directory: ./skills-scope-backend
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
@@ -53,5 +55,5 @@ jobs:
         with:
           app-name: 'SkillsScope-Backend'
           slot-name: 'Production'
-          package: .
+          package: ${{env.DOTNET_ROOT}}/myapp
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_599F73C0D01344BDBD495629BC761755 }}
