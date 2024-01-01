@@ -8,7 +8,8 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
                 "http://localhost:3000", // Development origin
-                "https://skillsscope.com/" // Production origin
+                "https://skillsscope.com/", // Production origin
+                "https://agreeable-ground-099edb010.4.azurestaticapps.net/"
             )
             .AllowAnyHeader()
             .AllowAnyMethod();
