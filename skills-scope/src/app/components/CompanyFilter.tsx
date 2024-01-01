@@ -27,7 +27,7 @@ const CompanyFilter: React.FC<CompanyFilterProps> = ({
   async function getAsyncData(searchQuery: string, signal: AbortSignal) {
     try {
       const response = await fetch(
-        `http://localhost:5277/company/companies?query=${searchQuery}`,
+        `https://skillsscope-backend.azurewebsites.net/company/companies?query=${searchQuery}`,
         { signal }
       );
       if (!response.ok) {

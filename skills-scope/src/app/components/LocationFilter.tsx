@@ -53,7 +53,7 @@ const LocationFilter: React.FC<LocationFilterProps> = ({
   async function getAsyncData(searchQuery: string, signal: AbortSignal) {
     try {
       const response = await fetch(
-        `http://localhost:5277/location/locations?query=${searchQuery}`,
+        `https://skillsscope-backend.azurewebsites.net/location/locations?query=${searchQuery}`,
         { signal }
       );
       if (!response.ok) {

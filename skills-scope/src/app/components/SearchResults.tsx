@@ -56,7 +56,7 @@ const SearchResults = () => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:5277/search/${activeTab}?${queryParams.toString()}`,
+          `https://skillsscope-backend.azurewebsites.net/search/${activeTab}?${queryParams.toString()}`,
           { signal: controller.signal }
         );
         if (!response.ok) throw new Error("Network response was not ok");
