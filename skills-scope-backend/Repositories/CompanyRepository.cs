@@ -5,23 +5,9 @@ using skills_scope_backend.Models;
 
 namespace skills_scope_backend.Repositories
 {
-	public class CompanyRepository : ICompanyRepository
+	public class CompanyRepository(string connectionString) : ICompanyRepository
 	{
-		private readonly string _connectionString;
-
-		public CompanyRepository(IConfiguration configuration)
-		{
-			// Retrieve the connection string
-			var connectionString = configuration.GetConnectionString("DefaultConnection");
-
-			// Check for null and handle it appropriately
-			if (string.IsNullOrEmpty(connectionString))
-			{
-				throw new InvalidOperationException("Database connection string 'DefaultConnection' not found.");
-			}
-
-			_connectionString = connectionString;
-		}
+		private readonly string _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
 
 		public async Task<IEnumerable<Company>> GetFilteredCompaniesAsync(string query)
 		{
@@ -106,7 +92,7 @@ namespace skills_scope_backend.Repositories
 		{
 			using IDbConnection db = new NpgsqlConnection(_connectionString);
 			await db.ExecuteAsync("DELETE FROM companies WHERE company_id = @CompanyId",
-								  new { CompanyId = companyId });
+									new { CompanyId = companyId });
 		}
 	}
 }
