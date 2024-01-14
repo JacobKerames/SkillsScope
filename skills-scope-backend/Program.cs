@@ -21,6 +21,7 @@ builder.Services.AddSwaggerGen();
 
 // Read the connection string from the configuration
 var connectionString = Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_SkillsScopeDBConnection")
+    ?? builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Database connection string 'SkillsScopeDBConnection' not found.");
 
 // Add scoped services for your repositories, passing in the connection string
@@ -32,11 +33,8 @@ var app = builder.Build();
 
 app.UseCors("AllowSpecificOrigins");
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.MapControllers();
 app.Run();
