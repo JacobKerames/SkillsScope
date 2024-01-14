@@ -20,7 +20,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Read the connection string from the configuration
-var connectionString = builder.Configuration.GetConnectionString("SkillsScopeDBConnection")
+var connectionString = builder.Configuration.GetConnectionString("POSTGRESQLCONNSTR_SkillsScopeDBConnection")
     ?? throw new InvalidOperationException("Database connection string 'SkillsScopeDBConnection' not found.");
 
 // Add scoped services for your repositories, passing in the connection string
