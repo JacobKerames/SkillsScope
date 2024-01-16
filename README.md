@@ -56,6 +56,13 @@ Database:
 3. Update the connection string in `appsettings.Development.json` to match your local database settings.
 4. Run the SQL scripts provided in `skills-scope-backend/Data/SqlScripts` using PostgreSQL command line or a database management tool.
 
+## Usage
+`Simple and Intuitive Interface:` SkillsScope is designed with a user-friendly interface, making it accessible for both technical and non-technical users. Follow these easy steps to navigate and utilize the application:
+1. `Accessing the Application:` Open your web browser and go to `skillsscope.com` to access the production version of SkillsScope, or use `http://localhost:3000` for the development version after starting the local development server as outlined in the Getting Started section.
+2. `Conducting a Search:` Enter a job title in the search bar to view the most in-demand skills and requirements.
+3. `Applying Filters:` Optionally, use the filters for more specific results based on recency, company, location, and job level.
+4. `Viewing Results:` The results will be displayed using a horzontal bar chart, where the percentage for each requirement represents the frequency it is included in job postings for the searched job title. Use the tabs to switch between results for skills, education, and experience.
+
 ## Troubleshooting Common Issues
 Errors related to `npm` or `webpack` can typically be resolved with the following steps:
 1. Delete the `node_modules` folder by running `rm -rf node_modules`.
