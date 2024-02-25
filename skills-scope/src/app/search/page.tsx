@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Container, Title, Text, Collapse, Box, Center } from "@mantine/core";
+import { Container, Title, Text, Collapse, Center } from "@mantine/core";
 import { useDisclosure, useInputState } from "@mantine/hooks";
 import { useRouter } from "next/navigation";
 import { metadata } from "../metadata";
