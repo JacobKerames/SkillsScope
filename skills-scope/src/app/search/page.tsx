@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Container, Title, Text, Collapse, Center } from "@mantine/core";
 import { useDisclosure, useInputState } from "@mantine/hooks";
 import { useRouter } from "next/navigation";
@@ -98,7 +98,9 @@ const SearchResultsPage = () => {
           />
         </Collapse>
       </Center>
-      <SearchResults />
+      <Suspense>
+        <SearchResults />
+      </Suspense>
     </Container>
   );
 };
