@@ -3,6 +3,7 @@ import { Loader, Container, Text, Title, Center } from "@mantine/core";
 import { useSearchParams } from "next/navigation";
 import BarChart from "./BarChart";
 import ResultsTypeButtons from "./ResultsTypeButtons";
+import baseUrl from '../env.config';
 
 export type Results = {
   resultName: string;
@@ -56,7 +57,7 @@ const SearchResults = () => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `https://skillsscope-backend.azurewebsites.net/search/${activeTab}?${queryParams.toString()}`,
+          `${baseUrl}/search/${activeTab}?${queryParams.toString()}`,
           { signal: controller.signal }
         );
         if (!response.ok) throw new Error("Network response was not ok");
@@ -126,7 +127,7 @@ const SearchResults = () => {
     if (results === null) {
       return (
         <Center h={150}>
-          <Loader color='#4b86b4'/>
+          <Loader color="#4b86b4" />
         </Center>
       );
     }

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { CloseButton, Combobox, TextInput, useCombobox } from "@mantine/core";
+import baseUrl from '../env.config';
 
 interface Company {
   companyId: number;
@@ -27,7 +28,7 @@ const CompanyFilter: React.FC<CompanyFilterProps> = ({
   async function getAsyncData(searchQuery: string, signal: AbortSignal) {
     try {
       const response = await fetch(
-        `https://skillsscope-backend.azurewebsites.net/company/companies?query=${searchQuery}`,
+        `${baseUrl}/company/companies?query=${searchQuery}`,
         { signal }
       );
       if (!response.ok) {

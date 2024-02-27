@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { CloseButton, Combobox, TextInput, useCombobox } from "@mantine/core";
+import baseUrl from '../env.config';
 
 interface City {
   cityId: number;
@@ -53,7 +54,7 @@ const LocationFilter: React.FC<LocationFilterProps> = ({
   async function getAsyncData(searchQuery: string, signal: AbortSignal) {
     try {
       const response = await fetch(
-        `https://skillsscope-backend.azurewebsites.net/location/locations?query=${searchQuery}`,
+        `${baseUrl}/location/locations?query=${searchQuery}`,
         { signal }
       );
       if (!response.ok) {
