@@ -14,7 +14,7 @@ const ResultsTypeButtons: React.FC<ResultsTypeButtonsProps> = ({ activeTab, setA
     height: '100%',
     fontSize: '1em',
     fontWeight: 'bold',
-    fontColor: '#191D32',
+    fontColor: '#4b86b4',
   };
 
   return (
@@ -24,7 +24,7 @@ const ResultsTypeButtons: React.FC<ResultsTypeButtonsProps> = ({ activeTab, setA
         marginBottom: '2em'
       }}
     >
-      <Tabs color="#191D32" value={activeTab} onChange={setActiveTab}>
+      <Tabs color="#4b86b4" value={activeTab} onChange={setActiveTab}>
         <Tabs.List grow>
           <Tabs.Tab value="skills" style={tabStyle}>Skills</Tabs.Tab>
           <Tabs.Tab value="education" style={tabStyle}>Education</Tabs.Tab>

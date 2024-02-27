@@ -60,9 +60,10 @@ const SearchForm: React.FC<SearchFormProps> = ({
             aria-label="Job title search"
             classNames={{ input: classes.textInput }}
           />
-          <Button type="submit">Search</Button>
+          <Button type="submit" color='#4b86b4'>Search</Button>
           {pathname !== "/" && (
             <Button
+              color='#4b86b4'
               onClick={toggleFilters}
               variant={showFilters ? "filled" : "outline"}
             >

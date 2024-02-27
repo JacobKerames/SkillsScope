@@ -67,7 +67,7 @@ const BarChart = ({ results }: BarChartProps) => {
         .attr("height", barHeight)
         .attr("x", 0)
         .attr("width", (d) => xScale(d.percentage))
-        .attr("fill", "#191D32")
+        .attr("fill", "#4b86b4")
         .attr("rx", 4) // Set the x-axis radius for rounded corners
         .attr("ry", 4); // Set the y-axis radius for rounded corners
 
@@ -82,7 +82,7 @@ const BarChart = ({ results }: BarChartProps) => {
         .attr("x", 2)
         .attr("text-anchor", "start") // Aligns the text to the start of the bar
         .text((d) => d.resultName)
-        .attr("fill", "#191D32")
+        .attr("fill", "#4b86b4")
         .attr("font-size", "15px")
         .attr("font-weight", "bold");
 

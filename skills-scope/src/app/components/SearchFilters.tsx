@@ -102,7 +102,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
       </Grid>
       {isAnyFilterSet && (
         <Container my="md" size="xs" style={{ textAlign: "center" }}>
-          <Button onClick={handleResetFilters}>Reset</Button>
+          <Button onClick={handleResetFilters} color='#4b86b4'>Reset</Button>
         </Container>
       )}
     </Paper>

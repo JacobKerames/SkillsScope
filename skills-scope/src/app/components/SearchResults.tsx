@@ -126,7 +126,7 @@ const SearchResults = () => {
     if (results === null) {
       return (
         <Center h={150}>
-          <Loader />
+          <Loader color='#4b86b4'/>
         </Center>
       );
     }
