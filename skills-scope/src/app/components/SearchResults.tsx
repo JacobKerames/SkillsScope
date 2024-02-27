@@ -125,7 +125,7 @@ const SearchResults = () => {
   const renderResultsContent = () => {
     if (results === null) {
       return (
-        <Center className="mb-20">
+        <Center h={150}>
           <Loader />
         </Center>
       );

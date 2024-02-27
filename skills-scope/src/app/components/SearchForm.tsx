@@ -50,7 +50,7 @@ const SearchForm: React.FC<SearchFormProps> = ({
   return (
     <>
       <form onSubmit={handleSearch}>
-        <Group className={classes.groupBorder}>
+        <Group className={classes.groupBorder} gap="xs">
           <TextInput
             size="md"
             variant="unstyled"
