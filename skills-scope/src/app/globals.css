@@ -4,10 +4,12 @@
 
 :root {
   --foreground-rgb: 255, 255, 255;
+  --background-color: 33, 33, 33;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
+  background-color: rgb(var(--background-color));
   background-image: url('desktop.jpg');
   background-size: cover;
   background-position: center;
