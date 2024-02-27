@@ -98,7 +98,8 @@ const BarChart = ({ results }: BarChartProps) => {
         .text((d) => `${d.percentage.toFixed(2)}%`) // Display the percentage
         .attr("text-anchor", "end") // Right-align the text with the end of the bar
         .attr("fill", "#E6E6E6") // Set the text color to white for visibility
-        .attr("font-size", "15px");
+        .attr("font-size", "15px")
+        .attr("font-weight", "bold");
     }
   }, [chartHeight, containerWidth, results]);
 
