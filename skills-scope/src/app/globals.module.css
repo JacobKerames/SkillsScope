@@ -1,0 +1,12 @@
+.textInput {
+	color: white;
+  &::placeholder {
+    color: lightgray;
+  }
+}
+
+.groupBorder {
+  border-bottom: 1px solid white;
+	border-radius: 3px;
+	padding-bottom: 2px;
+}

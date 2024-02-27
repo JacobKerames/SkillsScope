@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa";
 import { TextInput, Button, Group, Alert } from "@mantine/core";
+import classes from "../globals.module.css";
 
 type SearchFormProps = {
   searchTerm: string;
@@ -49,12 +50,15 @@ const SearchForm: React.FC<SearchFormProps> = ({
   return (
     <>
       <form onSubmit={handleSearch}>
-        <Group gap="xs" align="center">
+        <Group className={classes.groupBorder}>
           <TextInput
+            size="md"
+            variant="unstyled"
             value={searchTerm}
             onChange={handleInputChange}
             placeholder="Search job titles..."
             aria-label="Job title search"
+            classNames={{ input: classes.textInput }}
           />
           <Button type="submit">Search</Button>
           {pathname !== "/" && (
