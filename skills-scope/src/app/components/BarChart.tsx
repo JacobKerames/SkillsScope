@@ -82,7 +82,7 @@ const BarChart = ({ results }: BarChartProps) => {
         .attr("x", 2)
         .attr("text-anchor", "start") // Aligns the text to the start of the bar
         .text((d) => d.resultName)
-        .attr("fill", "#4b86b4")
+        .attr("fill", "#E6E6E6")
         .attr("font-size", "15px")
         .attr("font-weight", "bold");
 
