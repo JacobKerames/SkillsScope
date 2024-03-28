@@ -83,8 +83,7 @@ const BarChart = ({ results }: BarChartProps) => {
         .attr("text-anchor", "start") // Aligns the text to the start of the bar
         .text((d) => d.resultName)
         .attr("fill", "#E6E6E6")
-        .attr("font-size", "15px")
-        .attr("font-weight", "bold");
+        .attr("font-size", "15px");
 
       // Add percentage labels inside bars
       svg
