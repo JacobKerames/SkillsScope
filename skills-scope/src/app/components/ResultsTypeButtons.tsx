@@ -1,4 +1,5 @@
 import { Box, Tabs } from "@mantine/core";
+import styles from '../globals.module.css';
 
 interface ResultsTypeButtonsProps {
   activeTab: string | null;
@@ -6,17 +7,6 @@ interface ResultsTypeButtonsProps {
 }
 
 const ResultsTypeButtons: React.FC<ResultsTypeButtonsProps> = ({ activeTab, setActiveTab }) => {
-
-  const tabStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100%',
-    fontSize: '1em',
-    fontWeight: 'bold',
-    fontColor: '#4b86b4',
-  };
-
   return (
     <Box
       style={{ 
@@ -26,9 +16,9 @@ const ResultsTypeButtons: React.FC<ResultsTypeButtonsProps> = ({ activeTab, setA
     >
       <Tabs color="#4b86b4" value={activeTab} onChange={setActiveTab}>
         <Tabs.List grow>
-          <Tabs.Tab value="skills" style={tabStyle}>Skills</Tabs.Tab>
-          <Tabs.Tab value="education" style={tabStyle}>Education</Tabs.Tab>
-          <Tabs.Tab value="experience" style={tabStyle}>Experience</Tabs.Tab>
+          <Tabs.Tab value="skills" className={styles.tab}>Skills</Tabs.Tab>
+          <Tabs.Tab value="education" className={styles.tab}>Education</Tabs.Tab>
+          <Tabs.Tab value="experience" className={styles.tab}>Experience</Tabs.Tab>
         </Tabs.List>
       </Tabs>
     </Box>
