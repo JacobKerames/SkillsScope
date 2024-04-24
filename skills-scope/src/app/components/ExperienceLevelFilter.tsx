@@ -7,9 +7,17 @@ interface ExperienceLevelFilterProps {
 
 const ExperienceLevelFilter: React.FC<ExperienceLevelFilterProps> = ({ level, onLevelChange }) => {
   const experienceLevels = [
+    { value: '', label: 'Any Level' },
     { value: 'entry', label: 'Entry' },
     { value: 'junior', label: 'Junior' },
-    // ... add other levels
+    { value: 'mid', label: 'Mid' },
+    { value: 'senior', label: 'Senior' },
+    { value: 'lead', label: 'Lead' },
+    { value: 'principal', label: 'Principal' },
+    { value: 'staff', label: 'Staff' },
+    { value: 'manager', label: 'Manager' },
+    { value: 'director', label: 'Director' },
+    { value: 'vp', label: 'VP' }
   ];
 
 	const handleChange = (value: string | null) => {
@@ -23,10 +31,7 @@ const ExperienceLevelFilter: React.FC<ExperienceLevelFilterProps> = ({ level, on
         value={level}
         onChange={handleChange}
         placeholder="Experience Level"
-        data={[
-          { value: '', label: 'Any' },
-          ...experienceLevels
-        ]}
+        data={experienceLevels}
       />
     </div>
   );
