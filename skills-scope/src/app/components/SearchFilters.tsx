@@ -68,7 +68,15 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
   };
 
   return (
-    <Paper shadow="sm" p="md" withBorder>
+    <Paper 
+      shadow="sm"
+      p="md"
+      mt='md'
+      style={{
+        backgroundColor: 'transparent',
+        borderBottom: '1px solid #FFFFFF'
+      }}
+    >
       <Grid gutter="md">
         <Grid.Col span={6}>
           <TimeFrameFilter
