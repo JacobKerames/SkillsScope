@@ -85,7 +85,7 @@ const SearchResults = () => {
   ]);
 
   const generateResultsLabel = () => {
-    let label = "";
+    let label = " ";
     const filters = [];
 
     if (level) {
@@ -152,9 +152,8 @@ const SearchResults = () => {
                 .split(" ")
                 .filter((word) => word)
                 .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(" ")}
-          </Text>
-          <Text size="lg" c="gray-500">
+                .join(" ")
+            }
             {generateResultsLabel()}
           </Text>
         </Center>
