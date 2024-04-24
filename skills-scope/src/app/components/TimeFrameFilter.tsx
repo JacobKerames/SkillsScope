@@ -7,7 +7,7 @@ interface TimeFrameFilterProps {
 
 const TimeFrameFilter: React.FC<TimeFrameFilterProps> = ({ timeFrame, onTimeFrameChange }) => {
 	const timeFrameOptions = [
-    { value: '', label: 'Any' },
+    { value: '', label: 'Any Time' },
     { value: 'pastMonth', label: 'Past Month' },
     { value: 'pastYear', label: 'Past Year' },
     { value: 'pastTwoYears', label: 'Past Two Years' },
